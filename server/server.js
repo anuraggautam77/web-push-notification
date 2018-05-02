@@ -29,9 +29,7 @@ const server = app.listen(port, function(){
 // Configuration
 // ================================================================================================
 // Set up Mongoose
-mongoose.connect (isDev ? config.db_dev : config.db, {
-  useMongoClient: true
-});
+mongoose.connect (isDev ? config.db_dev : config.db);
 mongoose.Promise = global.Promise;
 
 app.use(cors());
