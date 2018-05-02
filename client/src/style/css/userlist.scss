@@ -1,0 +1,29 @@
+.userlist-container{
+  .media{
+    padding:5px 5px;
+    border-radius: 5px;
+    background:#fff;
+    p{
+      padding: 0;
+    }
+  }
+  .well{
+    border-bottom:  1px solid rgb(227, 227, 227);
+    border: 0;
+  }
+
+  img{
+    width: 75px;
+    border: 1px solid rgb(123, 123, 123);
+    border-radius: 50%;
+    min-width: 75px;
+    margin-right: 10px;
+  }
+  .media-left{
+    padding: 0px
+  }
+
+  .well  {
+    margin-bottom: 0; 
+  }
+}

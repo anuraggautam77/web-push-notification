@@ -1,0 +1,70 @@
+ 
+.login-component{
+    img {
+      border-radius: 8px;
+      width: 100%;
+      max-height:508px;
+    }
+   
+
+  .form-top-left P {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #cccbcc;
+  }
+  .form-box {
+    flex-basis: 100%;
+    -ms-flex-item-align: center;
+    -ms-grid-row-align: center;
+    align-self: center;
+    padding: 24px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    min-height: 508px;
+  }
+  .color {
+    color: #57cbcc;
+  }
+  .contact-us {
+    padding-top: 50px;
+  }
+
+   
+
+  .contact-form .form-control {
+    background-color: transparent;
+    border: 1px solid #cccbcc;
+    height: 45px;
+  }
+
+  .contact-form textarea.form-control {
+    padding: 10px;
+    height: 120px;
+  }
+
+  .contact-form input:hover,
+    .contact-form textarea:hover,
+    .btn-transparent:hover {
+    border-color: #57cbcc;
+  }
+
+  .btn-transparent {
+    border: 1px solid rgba(236, 239, 241, 0.07);
+    background: #57cbcc;
+    padding: 12px 0;
+    width: 50%;
+    margin: 0;
+  }
+
+
+  .new-acount {
+    margin-top: 20px;
+    a{
+      text-decoration: none;
+      font-size: 20px;
+      color: #808080;
+    }
+  }
+
+
+
+}
