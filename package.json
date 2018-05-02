@@ -1,7 +1,7 @@
 {
-  "name": "My-stuff",
+  "name": "Push Notification ",
   "version": "1.0.0",
-  "description": "",
+  "description": " FCM - integration  , Push Notification ",
   "author": "Anurag gautam",
   "repository": {
     "type": "git",
