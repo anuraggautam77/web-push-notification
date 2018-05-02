@@ -1,6 +1,6 @@
 {
-    "name": "Share and Connect",
-    "short_name": "Share&Connect",
+    "name": "Push Notification Demo",
+    "short_name": "Notification",
     "icons": [
         
         {
@@ -42,7 +42,7 @@
     "orientation": "portrait-primary",
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
-    "description": "Share and Connect !",
+    "description": "Push Notification !",
     "dir": "ltr",
     "lang": "en-US"
 }
