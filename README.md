@@ -45,12 +45,6 @@ npm run start:dev
 
 
 Screenshot
-
-Landing page without login 
-![capture](https://user-images.githubusercontent.com/1465967/38768241-fd93251c-400d-11e8-9b7d-d4e0558e9024.PNG)
-
-User Dashboard
-![capture](https://user-images.githubusercontent.com/1465967/38768216-913d7944-400d-11e8-9a3e-12807b8ef86e.PNG)
-
+   Cominng soon..
 
 
