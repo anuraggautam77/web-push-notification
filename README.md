@@ -41,7 +41,7 @@ npm run start:dev
 
 ## Demo Link
 
-- [Click here](https://share-and-connect.herokuapp.com/)
+- [Click here](https://donotifyme.herokuapp.com)
 
 
 Screenshot
