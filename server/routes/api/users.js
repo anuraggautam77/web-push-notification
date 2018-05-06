@@ -25,6 +25,10 @@ const SERVICE_CONST = {
     GET_USER_DETAIL: "getuserdetail",
     USER_UPDATE_DETAIL: "updateuserdetail",
     UPDATE_USER_DATA: 'updateuserdata',
+    IMAGE_UPLOAD: 'uploads',
+    SEND_REQUEST: 'sendrequest',
+    ACCEPT_REQUEST: 'acceptrequest',
+    ACCEPT_FRIEND_LIST: 'acceptfriendlist',
     SAVE_POST: 'savepost',
     GET_MY_POSTS: 'getmyposts',
     DELETE_MY_POST: 'deletemypost',
@@ -73,8 +77,6 @@ module.exports = (apiRoutes) => {
         let objCheck = tokenVerify(req, res);
         res.status(objCheck.status).json({status: objCheck.status, message: objCheck.message});
     });
-    
-    
     apiRoutes.post(`/${SERVICE_CONST.NEW_TOKEN}`, function (req, res) {
         let objCheck = tokenVerify(req, res);
         if (objCheck.status === 200) {
@@ -85,8 +87,15 @@ module.exports = (apiRoutes) => {
             res.status(objCheck.status).json({status: objCheck.status, message: objCheck.message});
         }
     });
-     
-    
+    apiRoutes.post(`/${SERVICE_CONST.IMAGE_UPLOAD}`, (req, res, next) => {
+        let imageFile = req.files.file;
+        imageFile.mv(`${folderpath}\\${req.body.filename}`, function (err) {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            res.json({file: "images/" + req.body.filename});
+        });
+    });
     apiRoutes.post(`/${SERVICE_CONST.USER_FCM}`, function (req, res) {
         Fcm.find({
             'userid': cryptr.decrypt(req.body.userId)
@@ -123,8 +132,6 @@ module.exports = (apiRoutes) => {
             }
         });
     });
-    
-    
     apiRoutes.post(`/${SERVICE_CONST.POST_NOTIFICATION}`, function (req, res) {
         let obj = {};
         if (req.body.ptype === 'p') {
@@ -150,6 +157,7 @@ module.exports = (apiRoutes) => {
             } else {
                 res.json({status: "success", message: "No record found!!"});
             }
+
 
         });
 
@@ -182,20 +190,18 @@ module.exports = (apiRoutes) => {
 
         bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
             req.body.password = hash;
-            const users = new Users(req.body);
-            users.save((err) => {
-                if (err !== null) {
-                    if (err.code === DUPLICATE_CODE) {
+                    
+          let users = new Users(req.body);
+        users.save((err, data) => {
+            if (err !== null) {
+                 if (err.code === DUPLICATE_CODE) {
                         res.json({statuscode: DUPLICATE_CODE, status: 'error', message: 'Email is already exist'});
                     }
-                }
-            }).then(() => {
-                users.update({_id: users._id}, {'userId': users._id});
-                res.json({statuscode: '200', status: 'success', message: 'Register Sucucessfully '});
-            }).catch((err) => {
-                console.log("asdexcetion >>>>", err);
-            });
+            }
+            res.json({statuscode: '200', status: 'success', message: 'Register Sucucessfully '});
         });
+       
+        }); 
     });
     apiRoutes.post(`/${SERVICE_CONST.SIGN_IN}`, function (req, res) {
 
@@ -217,7 +223,37 @@ module.exports = (apiRoutes) => {
 
         });
     });
-    
+    apiRoutes.get(`/${SERVICE_CONST.GET_USER_LIST}/:id`, (req, res) => {
+        if (req.params.id !== 'null') {
+            let decryptedString = cryptr.decrypt(req.params.id);
+            Users.find({'_id': {$ne: decryptedString}}, (error, users) => {
+                if (users.length > 0) {
+
+                    var contr = new UserController();
+                    UsersDetails.find({'userId': {$ne: decryptedString}}, (error, details) => {
+                        let list = contr.getuserList(users);
+                        let detail = contr.getUserDetails(details);
+                        list.forEach((val, i) => {
+                            let id = val._id;
+                            detail.forEach((dval, k) => {
+                                if (id === dval.userId) {
+                                    list[i]['userDetail'] = dval;
+                                }
+                                ;
+                            });
+                        });
+                        res.json({status: "success", list: list});
+                    });
+                    //  res.json ({status: "success", list: contr.getuserList (users)});
+
+                } else {
+                    res.json({status: "success", message: "No record found!!!!"});
+                }
+            });
+        } else {
+            res.json({status: "error", message: "Something goes wrong!!!!"});
+        }
+    });
     apiRoutes.get(`/${SERVICE_CONST.GET_USER_DETAIL}/:id`, (req, res) => {
         if (req.params.id !== 'null') {
             let decryptedString = cryptr.decrypt(req.params.id);
@@ -309,9 +345,94 @@ module.exports = (apiRoutes) => {
             ;
         });
     });
-   
-    
-   
+    apiRoutes.post(`/${SERVICE_CONST.SEND_REQUEST}`, (req, res) => {
+
+        var queryOne = {'_id': cryptr.decrypt(req.body.requestedby)};
+        Users.findOneAndUpdate(queryOne, {
+            $push: {friends: {
+                    status: 'pending',
+                    ftype: 'SR',
+                    userid: mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedto))
+                }}
+        }, function (err, doc) {
+            /** Push to another frind **/
+            var query = {'_id': cryptr.decrypt(req.body.requestedto)};
+            Users.findOneAndUpdate(query, {
+                $push: {friends: {
+                        status: 'pending',
+                        ftype: 'RR',
+                        userid: mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedby))
+                    }}
+            }, function (err, doc) {
+                res.json({status: "pending"});
+            });
+        });
+    });
+    apiRoutes.post(`/${SERVICE_CONST.ACCEPT_REQUEST}`, (req, res) => {
+
+        var queryOne = {
+            "_id": cryptr.decrypt(req.body.requestedby),
+            "friends.userid": mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedto))
+        };
+        Users.findOneAndUpdate(queryOne, {$set: {"friends.$.status": 'ACCEPT'}},
+                function (err, doc) {
+
+                    /** Push to another frind **/
+                    var query = {
+                        "_id": cryptr.decrypt(req.body.requestedto),
+                        "friends.userid": mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedby))
+                    };
+                    Users.findOneAndUpdate(query, {$set: {"friends.$.status": 'ACCEPT'}},
+                            function (err, doc) {
+                                res.json({status: doc});
+                            });
+                });
+    });
+    apiRoutes.get(`/${SERVICE_CONST.ACCEPT_FRIEND_LIST}/:id`, (req, res) => {
+        var contr = new UserController();
+        if (req.params.id !== 'null') {
+            let decryptedString = mongoose.Types.ObjectId(cryptr.decrypt(req.params.id))
+
+            Users.aggregate([
+                {"$match": {"friends.status": "ACCEPT", '_id': decryptedString}},
+                {"$project": {
+                        "users": {
+                            "$map": {
+                                "input": {
+                                    "$filter": {
+                                        "input": "$friends",
+                                        "as": "el",
+                                        "cond": {"$eq": ["$$el.status", "ACCEPT"]}
+                                    }
+                                },
+                                "as": "item",
+                                "in": "$$item.userid"
+                            }
+                        }
+                    }},
+                {
+                    "$lookup": {
+                        "from": "users",
+                        "localField": "users",
+                        "foreignField": "_id",
+                        "as": "finaldata"
+
+                    }
+                },
+            ]).exec((err, results) => {
+                if (err) {
+                    res.json({status: "error", message: "Something goes wrong!!!!"});
+                }
+                ;
+                if (results.length > 0) {
+                    res.json({status: "success", list: contr.getuserList(results[0].finaldata)});
+                } else {
+                    res.json({status: "success", message: "No record found!!!!"});
+                }
+            });
+        }
+
+    });
     apiRoutes.post(`/${SERVICE_CONST.SAVE_POST}`, function (req, res, next) {
 
         req.body._author = cryptr.decrypt(req.body.userid);
@@ -378,7 +499,6 @@ module.exports = (apiRoutes) => {
             res.json({status: "Post Listing", posts: results, obj: obj});
         });
     });
-    
     apiRoutes.post(`/${SERVICE_CONST.DETAIL_POST}`, function (req, res) {
         let reqdata = req.body, postid = '', obj = {};
         if (req.body.hasOwnProperty('postid')) {
@@ -406,7 +526,6 @@ module.exports = (apiRoutes) => {
             res.json({status: "Post Listing", posts: results, obj: obj});
         });
     });
-    
     apiRoutes.post(`/${SERVICE_CONST.DELETE_MY_POST}`, function (req, res) {
 
         let userId = cryptr.decrypt(req.body.userid);
@@ -416,9 +535,9 @@ module.exports = (apiRoutes) => {
                 res.json({status: "success", message: messgae});
             });
         }
+
+
     });
-    
-    
     apiRoutes.post(`/${SERVICE_CONST.SAVE_COMMENT}`, function (req, res) {
 
         let  obj = {
