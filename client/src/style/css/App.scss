@@ -6,7 +6,7 @@
 }
 
 .navbar-default{
-    background-color:#2c3850;
+    background-color:#b73d34;
     .navbar-nav{
         float:none;
         li{
@@ -16,14 +16,14 @@
                     color: rgb(220, 218, 112);
                 }
                 &:active {
-                    color: rgb(220, 218, 112);
+                    color: #0f0627;
                 }
                 &:focus{
                     color: rgb(220, 218, 112);
                 }
             }
             a.active{
-                color: rgb(220, 218, 112);
+                color: #0f0627;
             }
         }
     }
