@@ -1,6 +1,5 @@
 import PubSub from 'pubsub-js';
-import 'whatwg-fetch';
-
+ 
 export class Auth {
     constructor() {
         this.newTokenInmin = 6000;

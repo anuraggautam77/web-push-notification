@@ -28,7 +28,7 @@ export default class Routing extends Component {
                       <NavMenu islogin={this.props.islogin}/>
                  </div>
                  <div className="container">
-                    <Route path="/"   exact component={MainPage} />
+                    <Route path="/"   exact component={Login} />
                     <Route path="/main"   component={MainPage} />
                     <Route path="/login" exact component={Login} />
                     <Route path="/fcm" exact component={Notification} />

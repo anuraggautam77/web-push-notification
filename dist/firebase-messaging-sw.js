@@ -1,3 +1,62 @@
+const cacheName = 'final-1';
+var filesToCache = [
+  '/',
+  '/index.html',
+  '/js/app.js',
+  '/img/avatars/',
+  '/img/bg/',
+   '/img/icons/',
+   '/img/logo/'
+]
+self.addEventListener('install', function(event) {
+  //  console.log('[Service Worker] Installing Service Worker ...', event);
+    event.waitUntil(
+     caches.open(cacheName).then(function(cache) {
+    //  console.log('[ServiceWorker] Caching app shell');
+      return cache.addAll(filesToCache);
+    })
+  );
+
+});
+
+
+self.addEventListener('push', function(event) {
+  
+});
+
+self.addEventListener('message', function(event) {
+    
+});
+ 
+
+
+self.addEventListener('activate', function(event) {
+  //  console.log('[Service Worker] Activating Service Worker ...', event);
+   // return self.clients.claim();
+});
+
+self.addEventListener('fetch', function(event) {
+//event.respondWith(fetch("https://www.google.com"));
+
+  // console.log('[Service Worker] Fetching something ....', event);
+
+});
+
+self.addEventListener('push', function(event) {
+  //  console.log('[Service Worker] push something ....', event);
+});
+
+self.addEventListener('message', function(event) {
+  //  console.log('[Service Worker] message something ....', event);
+});
+
+
+self.addEventListener('sync', function(event) {
+  //  console.log('[Service Worker] Sync something ....', event);
+});
+
+
+
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
 

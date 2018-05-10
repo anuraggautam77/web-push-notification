@@ -5,6 +5,7 @@
  */
 const mongoose = require('mongoose');
 const Cryptr = require('cryptr');
+const async = require('async');
 const sanitizeHtml = require('sanitize-html');
 const _ = require('lodash');
 const request = require('request');
@@ -56,6 +57,7 @@ module.exports = class UserController {
         }
         return userList;
     }
+
     getPostDetails(posts, onlytext) {
         let cryptr = new Cryptr(USER_ID_ENCRYPT_DECTYPT);
         posts.forEach((val, i) => {
@@ -84,13 +86,21 @@ module.exports = class UserController {
 
         return posts;
     }
-     
-       postToSubscriber(message, users, callback) {
-           
-        var count=0, tokencount=0;
-        users.forEach((obj) => {
+
+    serviceCall() {
+
+
+
+    }
+
+    postToSubscriber(message, users, callback) {
+
+        var count = 0, tokencount = 0;
+
+        async.each(users, (obj, callback1) => {
             message.text = message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName))
-            obj.token.forEach((token) => {
+            async.each(obj.token, (token, callback1) => {
+
                 tokencount++;
                 request({
                     url: 'https://fcm.googleapis.com/fcm/send',
@@ -117,22 +127,31 @@ module.exports = class UserController {
                         console.error('HTTP Error: ' + response.statusCode + ' - ' + response.statusMessage + '\n' + body);
                     } else {
                         count++;
-                         console.log(count+'.Send to '+obj.userDetail[0].firstName);
-                         if(count===tokencount){
+                        console.log(count + '.Send to ' + obj.userDetail[0].firstName);
+                        if (count === tokencount) {
                             callback(count);
-                            console.log("/////////////////////");  
-                            console.log("Message send to >>"+count+' Devices');
                             console.log("/////////////////////");
-                         };
-                      
+                            console.log("Message send to >>" + count + ' Devices');
+                            console.log("/////////////////////");
+                        }
+                        ;
+
                     }
                 });
-            });
-        });
 
- 
+
+
+            }, function (err) {
+                console.log("async.each done")
+            })
+
+        },
+                function (err) {
+                    console.log("async.each done")
+                })
+
     }
-     
+
 };
 
 

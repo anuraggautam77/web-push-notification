@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import 'whatwg-fetch';
 
 class Signin extends Component {
 

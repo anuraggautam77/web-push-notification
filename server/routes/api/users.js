@@ -190,18 +190,18 @@ module.exports = (apiRoutes) => {
 
         bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
             req.body.password = hash;
-                    
-          let users = new Users(req.body);
-        users.save((err, data) => {
-            if (err !== null) {
-                 if (err.code === DUPLICATE_CODE) {
+
+            let users = new Users(req.body);
+            users.save((err, data) => {
+                if (err !== null) {
+                    if (err.code === DUPLICATE_CODE) {
                         res.json({statuscode: DUPLICATE_CODE, status: 'error', message: 'Email is already exist'});
                     }
-            }
-            res.json({statuscode: '200', status: 'success', message: 'Register Sucucessfully '});
+                }
+                res.json({statuscode: '200', status: 'success', message: 'Register Sucucessfully '});
+            });
+
         });
-       
-        }); 
     });
     apiRoutes.post(`/${SERVICE_CONST.SIGN_IN}`, function (req, res) {
 
