@@ -3,8 +3,7 @@ import { withRouter } from "react-router-dom";
 import {Auth} from './common/auth';
 import PubSub from 'pubsub-js';
 import './style/css/App.scss';
-import Routing from './router/router';
-import Speechcontainer from './speechcontainer';
+import Routing from './router/router'; 
 
 class App extends Component {
     constructor(props) {
