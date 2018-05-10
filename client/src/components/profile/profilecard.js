@@ -33,8 +33,6 @@ class Profilecard extends Component {
                 obj.professional = json.list[0].userDetail.professional;
           }
           }
-         
-         
           this.setState (obj);
         }
       });
@@ -49,56 +47,6 @@ class Profilecard extends Component {
            {(()=>{
                if (this.state.hasOwnProperty('city') && this.state.city !==''  && this.state.city !==null) {
                    return ( <p> <span className="glyphicon glyphicon-map-marker"></span>:{this.state.city} {this.state.country}</p>);
-                  }
-            })()} 
-          
-          <hr />
-           {(()=>{
-              
-              
-               if (this.state.hasOwnProperty('professional') && this.state.professional!==null) {
-                  var str='', flag=false;
-                  if(this.state.professional.hasOwnProperty ('occupation')){
-                      str+=this.state.professional.occupation;
-                    }else{
-                      flag=true;
-                  };
-                 if(this.state.professional.hasOwnProperty ('company') &&  this.state.professional.company!=='' && 
-                      this.state.professional.company!==null){
-                      str+=" at " +this.state.professional.company;
-                    }else{
-                       flag=true;
-                   };
-                   
-                    if(flag){
-                     return (
-                      <NavLink to='/profile' className="button-style" >
-                         Update your Profile 
-                     </NavLink>
-                      )
-              }else{
-                  return (
-                      <span>
-                       <p className="title"> {str}</p>
-                           <hr />
-                       </span>
-                      )   
-              }
-                     
-                  }else{
-                     return (
-                      <NavLink to='/profile' className="button-style" >
-                         Update your Profile 
-                     </NavLink>
-                      )
-                  }
-             })()} 
-          
-          
-           {(()=>{
-             
-               if (this.state.tagline !=='' && this.state.tagline!==null) {
-                   return (<p><span className="glyphicon glyphicon-tags"></span>&nbsp;<i>{this.state.tagline}</i></p>);
                   }
             })()} 
             
