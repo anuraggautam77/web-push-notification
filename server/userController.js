@@ -94,61 +94,59 @@ module.exports = class UserController {
     }
 
     postToSubscriber(message, users, callback) {
-
         var count = 0, tokencount = 0;
-
-        async.each(users, (obj, callback1) => {
-            message.text = message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName))
-            async.each(obj.token, (token, callback1) => {
-
-                tokencount++;
-                request({
-                    url: 'https://fcm.googleapis.com/fcm/send',
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': ' application/json',
-                        'Authorization': 'key=AIzaSyCZk3C2aQwpNmOV6j8i4TEOSH6409PtD08'
-                    },
-                    body: JSON.stringify(
-                            {
-                                "notification": {
-                                    "title": message.title,
-                                    "body": message.text,
-                                    "icon": "https://share-and-connect.herokuapp.com/img/icons/apple-icon-57x57.png",
-                                    "click_action": "https://share-and-connect.herokuapp.com"
-                                },
-                                "to": token
+        async.each(users, (obj, callbackfirst) => {
+            async.each(obj.token, (token, callbacksecond) => {
+                if (token !== null) {
+                    tokencount++;
+                    request({
+                        url: 'https://fcm.googleapis.com/fcm/send',
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': ' application/json',
+                            'Authorization': 'key=AIzaSyCZk3C2aQwpNmOV6j8i4TEOSH6409PtD08'
+                        },
+                        body: JSON.stringify(
+                                {
+                                    "notification": {
+                                        "title": message.title,
+                                        "body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
+                                        "icon": "https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png",
+                                        "click_action": "https://donotifyme.herokuapp.com"
+                                    },
+                                    "to": token
+                                }
+                        )
+                    }, function (error, response, body) {
+                        if (error) {
+                            console.error(error, response, body);
+                        } else if (response.statusCode >= 400) {
+                            console.error('HTTP Error: ' + response.statusCode + ' - ' + response.statusMessage + '\n' + body);
+                        } else {
+                            count++;
+                            console.log(count + '.Send to ' + obj.userDetail[0].firstName);
+                            if (count === tokencount) {
+                                callback(count);
+                                console.log("/////////////////////");
+                                console.log("Message send to >>" + count + ' Devices');
+                                console.log("/////////////////////");
                             }
-                    )
-                }, function (error, response, body) {
-                    if (error) {
-                        console.error(error, response, body);
-                    } else if (response.statusCode >= 400) {
-                        console.error('HTTP Error: ' + response.statusCode + ' - ' + response.statusMessage + '\n' + body);
-                    } else {
-                        count++;
-                        console.log(count + '.Send to ' + obj.userDetail[0].firstName);
-                        if (count === tokencount) {
-                            callback(count);
-                            console.log("/////////////////////");
-                            console.log("Message send to >>" + count + ' Devices');
-                            console.log("/////////////////////");
-                        }
-                        ;
 
-                    }
-                });
+                        }
+                    });
+
+                }
 
 
 
             }, function (err) {
-                console.log("async.each done")
-            })
+                console.log("async.each done");
+            });
 
         },
                 function (err) {
-                    console.log("async.each done")
-                })
+                    console.log("async.each done");
+                });
 
     }
 
