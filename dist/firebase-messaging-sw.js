@@ -1,3 +1,27 @@
+
+const cacheName = 'final-1';
+var filesToCache = [
+    '/',
+    '/index.html',
+    '/js/app.js',
+    '/img/bg/',
+    '/img/icons/'
+   
+]
+self.addEventListener('install', function (event) {
+    //  console.log('[Service Worker] Installing Service Worker ...', event);
+    event.waitUntil(
+            caches.open(cacheName).then(function (cache) {
+        //  console.log('[ServiceWorker] Caching app shell');
+        return cache.addAll(filesToCache);
+    })
+            );
+
+});
+
+ 
+
+
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
 
@@ -15,16 +39,7 @@ firebase.initializeApp(config);
 const messaging = firebase.messaging();
 
 messaging.setBackgroundMessageHandler(function (payload) {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    // Customize notification here
-    var notificationTitle = 'Background Message Title';
-    var notificationOptions = {
-        body: 'Background Message body.',
-        icon: '/firebase-logo.png'
-    };
-
-    return self.registration.showNotification(notificationTitle,
-            notificationOptions);
+   
 });
 
 
@@ -38,41 +53,9 @@ self.addEventListener('push', function (event) {
     const title = obj.notification.title;
     const options = {
         body: obj.notification.body,
-        icon: 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png',
-        "badge": 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png'
+        icon: 'https://donotifyme.herokuapp.com/img/bg/bg.jpg',
+        badge: 'https://donotifyme.herokuapp.com/img/bg/bg.jpg'
     };
 
     event.waitUntil(self.registration.showNotification(title, options));
 });
-
-const cacheName = 'final-1';
-var filesToCache = [
-    '/',
-    '/index.html',
-    '/js/app.js',
-    '/img/avatars/',
-    '/img/bg/',
-    '/img/icons/',
-    '/img/logo/'
-]
-self.addEventListener('install', function (event) {
-    //  console.log('[Service Worker] Installing Service Worker ...', event);
-    event.waitUntil(
-            caches.open(cacheName).then(function (cache) {
-        //  console.log('[ServiceWorker] Caching app shell');
-        return cache.addAll(filesToCache);
-    })
-            );
-
-});
-
-
-self.addEventListener('activate', function (event) {
-    //  console.log('[Service Worker] Activating Service Worker ...', event);
-    // return self.clients.claim();
-});
-
-self.addEventListener('sync', function (event) {
-    //  console.log('[Service Worker] Sync something ....', event);
-});
-

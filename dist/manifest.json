@@ -1,7 +1,7 @@
 {
     "name": "Push Notification Demo",
     "short_name": "Notification",
-    "gcm_sender_id": "103953800507",
+    "gcm_sender_id": "58394593767",
     "icons": [
 
         {
@@ -15,7 +15,7 @@
             "type": "image/png" 
         },
         {
-            "src": "img/icons/android-icon-152x152.png",
+            "src": "img/icons/apple-icon-152x152.png",
             "sizes": "152x152",
             "type": "image/png" 
         },
