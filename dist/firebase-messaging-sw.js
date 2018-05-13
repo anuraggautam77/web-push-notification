@@ -36,25 +36,24 @@ var config = {
 firebase.initializeApp(config);
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.
-const messaging = firebase.messaging();
 
-messaging.setBackgroundMessageHandler(function (payload) {
+//const messaging = firebase.messaging();
+
+//messaging.setBackgroundMessageHandler(function (payload) {
    
-});
+//});
 
 
 self.addEventListener('push', function (event) {
-
     console.log('Push Notification Received.');
-    console.log('Push Notification had this data: "${event.data.text()}"');
     console.log(event);
     var eventData = event.data.text();
     var obj = JSON.parse(eventData); //Parse the received JSON object.
     const title = obj.notification.title;
     const options = {
         body: obj.notification.body,
-        icon: 'https://donotifyme.herokuapp.com/img/bg/bg.jpg',
-        badge: 'https://donotifyme.herokuapp.com/img/bg/bg.jpg'
+        icon: 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png',
+        image: 'https://donotifyme.herokuapp.com/img/bg/bg.jpg'
     };
 
     event.waitUntil(self.registration.showNotification(title, options));

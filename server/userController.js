@@ -25,7 +25,6 @@ module.exports = class UserController {
                 country: val.country,
                 friends: this.returnfnrdData(val.friends, cryptr)
             };
-
             userList.push(tempobj);
         });
         return userList;
@@ -36,7 +35,6 @@ module.exports = class UserController {
             temp.push({status: val1.status, userid: cryptr.encrypt((val1.userid)), ftype: val1.ftype})
         });
         return  temp;
-
     }
     getUserDetails(detail) {
 
@@ -83,7 +81,6 @@ module.exports = class UserController {
             val.user.email = val.userDetail[0].email;
             delete val.userDetail;
         });
-
         return posts;
     }
 
@@ -112,8 +109,7 @@ module.exports = class UserController {
                                         "title": message.title,
                                         "body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
                                         "icon": "https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png",
-                                        "click_action": "https://donotifyme.herokuapp.com",
-                                        "badge": 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png'
+                                        "click_action": "https://donotifyme.herokuapp.com"
                                     },
                                     "to": token
                                 }
@@ -135,20 +131,17 @@ module.exports = class UserController {
 
                         }
                     });
-
                 }
 
 
 
             }, function (err) {
-                console.log("async.each done");
+                console.log("async inner each done");
             });
-
         },
                 function (err) {
                     console.log("async.each done");
                 });
-
     }
 
 };
