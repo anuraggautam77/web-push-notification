@@ -112,7 +112,8 @@ module.exports = class UserController {
                                         "title": message.title,
                                         "body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
                                         "icon": "https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png",
-                                        "click_action": "https://donotifyme.herokuapp.com"
+                                        "click_action": "https://donotifyme.herokuapp.com",
+                                        "badge": 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png'
                                     },
                                     "to": token
                                 }

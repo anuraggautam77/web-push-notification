@@ -14,23 +14,36 @@ firebase.initializeApp(config);
 // messages.
 const messaging = firebase.messaging();
 
-messaging.setBackgroundMessageHandler(function(payload) {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
-  var notificationTitle = 'Background Message Title';
-  var notificationOptions = {
-    body: 'Background Message body.',
-    icon: '/firebase-logo.png'
-  };
+messaging.setBackgroundMessageHandler(function (payload) {
+    console.log('[firebase-messaging-sw.js] Received background message ', payload);
+    // Customize notification here
+    var notificationTitle = 'Background Message Title';
+    var notificationOptions = {
+        body: 'Background Message body.',
+        icon: '/firebase-logo.png'
+    };
 
-  return self.registration.showNotification(notificationTitle,
-    notificationOptions);
+    return self.registration.showNotification(notificationTitle,
+            notificationOptions);
 });
 
 
+self.addEventListener('push', function (event) {
 
+    console.log('Push Notification Received.');
+    console.log('Push Notification had this data: "${event.data.text()}"');
+    console.log(event);
+    var eventData = event.data.text();
+    var obj = JSON.parse(eventData); //Parse the received JSON object.
+    const title = obj.notification.title;
+    const options = {
+        body: obj.notification.body,
+        icon: 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png',
+        "badge": 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png'
+    };
 
-
+    event.waitUntil(self.registration.showNotification(title, options));
+});
 
 const cacheName = 'final-1';
 var filesToCache = [
@@ -58,23 +71,6 @@ self.addEventListener('activate', function (event) {
     //  console.log('[Service Worker] Activating Service Worker ...', event);
     // return self.clients.claim();
 });
-
-self.addEventListener('fetch', function (event) {
-//event.respondWith(fetch("https://www.google.com"));
-
-    // console.log('[Service Worker] Fetching something ....', event);
-
-});
-
-self.addEventListener('push', function (event) {
-    //  console.log('[Service Worker] push something ....', event);
-});
-
-self.addEventListener('message', function (event) {
-    //  console.log('[Service Worker] message something ....', event);
-    console.log(event);
-});
-
 
 self.addEventListener('sync', function (event) {
     //  console.log('[Service Worker] Sync something ....', event);
