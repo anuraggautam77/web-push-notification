@@ -32,24 +32,41 @@ class DeviceList extends Component {
         }
         ).then(res => res.json()).then(json => {
             console.log(json)
-            this.setState({'isdisable': false, isnotify: 'alert alert-success bd',"alertmessage": json.message});
+            this.setState({'isdisable': false, isnotify: 'alert alert-success bd', "alertmessage": json.message});
 
         });
 
-    }
+    };
+    
+    
+    
+    sendGeoNotification(){
+        
+         fetch('/api/geopostnotification', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({})
+        }
+        ).then(res => res.json()).then(json => {
+            console.log(json)
+            this.setState({'isdisable': false, isnotify: 'alert alert-success bd', "alertmessage": json.message});
+
+        });
+        
+        
+    };
+    
 
     render() {
         return (
                 <div className="col-md-12">
                 
-                    <h3> Send Notifications</h3>
-                    
-                    <div className="col-md-6">
-                    
+                    <h3>Push Notifications Dashboard</h3>
                     <div className={` ${this.state.isnotify} `}>
                         <strong>{this.state.alertmessage}</strong>
                     </div>
-                    
+                    <div className="col-md-6">
+                        <h4>Promotions Notifications</h4>
                         <div className="panel panel-default panel-order">
                             <div className="panel-body">
                                 <div className="row">
@@ -60,9 +77,9 @@ class DeviceList extends Component {
                         let disable = true;
                         if (event.target.value !== '') {
                                 disable = false;
-                                } 
+                                                                } 
                                             this.setState({
-                                'ptype': event.target.value, 'isdisable': disable })}} 
+                                                            'ptype': event.target.value, 'isdisable': disable })}} 
                                             className="form-control">
                                             <option value="">Select one</option>
                                             <option value="c">Coupons</option>
@@ -95,13 +112,36 @@ class DeviceList extends Component {
                                                 type="button" 
                                                 onClick={ (e) => {
                                                     this.sendNotification()
-                  }}
+                                                  }}
                                                 className="btn btn-primary">Send Notification</button> 
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                
+                    <div className="col-md-6">
+                        <h4>Near-By Store Notifications</h4>
+                        <div className="panel panel-default panel-order">
+                            <div className="panel-body">
+                                <div className="row">
+                                    <div className="col-md-12"> 
+                                        <button ref='nearbybutton' 
+                                        onClick={ (e) => {
+                                                    this.sendGeoNotification()
+                                                  }}
+                                                className="btn btn-primary">Send Notification</button> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                
+                
+                
+                
                 </div>
                                                 );
                 }

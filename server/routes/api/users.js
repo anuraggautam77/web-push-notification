@@ -3,6 +3,8 @@ const UsersDetails = require('../../models/Userdetails');
 const UserController = require('../../userController');
 const Posts = require('../../models/Posts');
 const Comments = require('../../models/Comments');
+const Geo = require('../../models/geoloc');
+
 const Fcm = require('../../models/fcm');
 const bcrypt = require('bcrypt');
 const Cryptr = require('cryptr');
@@ -38,6 +40,9 @@ const SERVICE_CONST = {
     GET_FCM: 'getfcm',
     GET_SUB_NOTIFICATION: 'subnotification',
     POST_NOTIFICATION: 'postnotification',
+
+    POST_GEO: 'geopostnotification',
+    WHERE_I_AM: 'whereiam'
 };
 let cryptr = new Cryptr(USER_ID_ENCRYPT_DECTYPT);
 module.exports = (apiRoutes) => {
@@ -132,6 +137,82 @@ module.exports = (apiRoutes) => {
             }
         });
     });
+
+
+    apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
+        console.log(req.body);
+        Geo.find({
+            'userid': cryptr.decrypt(req.body.userId)
+        }, (error, data) => {
+
+            if (data.length > 0) {
+                var obj = {};
+
+                var latlng = req.body.latlng;
+                obj.sub = true;
+                obj.lat = latlng.split('--')[0];
+                obj.lng = latlng.split('--')[1];
+                obj.imgurl = req.body.imgUrl;
+                Geo.update(
+                        {'userid': cryptr.decrypt(req.body.userId)},
+                        {
+                            $addToSet: {token: req.body.token},
+                            $set: obj
+                        }, (data) => {
+                    res.json({status: "200", message: "Upadte my location Scucessfully!!"});
+                });
+            } else {
+                var obj = {};
+                var latlng = req.body.latlng;
+                obj.sub = true;
+                obj.lat = latlng.split('--')[0];
+                obj.lng = latlng.split('--')[1];
+                obj.imgurl = req.body.imgUrl;
+                obj.token = req.body.token;
+                obj.userid = cryptr.decrypt(req.body.userId);
+                new Geo(obj).save().then(() => {
+                    res.json({status: "200", message: " Add my location Successfully!! !!!!"});
+                });
+            }
+        });
+    });
+
+
+
+
+
+
+
+    apiRoutes.post(`/${SERVICE_CONST.POST_GEO}`, function (req, res) {
+        let obj = {};
+        obj.sub = 'true';
+
+        Geo.aggregate([
+            {"$match": obj},
+            {$lookup: {from: 'users', localField: 'userid', foreignField: '_id', as: 'userDetail'}} // FCM+ user
+        ]).exec((error, results) => {
+            if (error) {
+                res.json({status: error});
+            }
+
+            if (results.length > 0) {
+                var contr = new UserController();
+                contr.GeoToSubscriber(req.body, results, function (data) {
+                    res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
+                });
+            } else {
+                res.json({status: "success", message: "No record found!!"});
+            }
+
+
+        });
+
+
+    });
+
+
+
+
     apiRoutes.post(`/${SERVICE_CONST.POST_NOTIFICATION}`, function (req, res) {
         let obj = {};
         if (req.body.ptype === 'p') {

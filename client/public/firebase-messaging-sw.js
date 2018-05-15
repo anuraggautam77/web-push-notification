@@ -52,8 +52,8 @@ self.addEventListener('push', function (event) {
     const title = obj.notification.title;
     const options = {
         body: obj.notification.body,
-        icon: 'https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png',
-        image: 'https://donotifyme.herokuapp.com/img/bg/bg.jpg'
+        icon: obj.notification.icon,
+        image: obj.notification.image
     };
 
     event.waitUntil(self.registration.showNotification(title, options));

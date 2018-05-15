@@ -84,12 +84,6 @@ module.exports = class UserController {
         return posts;
     }
 
-    serviceCall() {
-
-
-
-    }
-
     postToSubscriber(message, users, callback) {
         var count = 0, tokencount = 0;
         async.each(users, (obj, callbackfirst) => {
@@ -109,7 +103,8 @@ module.exports = class UserController {
                                         "title": message.title,
                                         "body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
                                         "icon": "https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png",
-                                        "click_action": "https://donotifyme.herokuapp.com"
+                                        "click_action": "https://donotifyme.herokuapp.com",
+                                        "image": 'https://donotifyme.herokuapp.com/img/bg/bg.jpg'
                                     },
                                     "to": token
                                 }
@@ -142,6 +137,66 @@ module.exports = class UserController {
                 function (err) {
                     console.log("async.each done");
                 });
+    }
+
+    GeoToSubscriber() {
+
+        var count = 0, tokencount = 0;
+        async.each(users, (obj, callbackfirst) => {
+            async.each(obj.token, (token, callbacksecond) => {
+                if (token !== null) {
+                    tokencount++;
+                    request({
+                        url: 'https://fcm.googleapis.com/fcm/send',
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': ' application/json',
+                            'Authorization': 'key=AIzaSyCZk3C2aQwpNmOV6j8i4TEOSH6409PtD08'
+                        },
+                        body: JSON.stringify(
+                                {
+                                    "notification": {
+                                        "title": "Your Nearby Store",
+                                        //"body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
+                                        "body": "Hi " + _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName),
+                                        "icon": "https://donotifyme.herokuapp.com/img/bg/loc.png",
+                                        "click_action": "https://donotifyme.herokuapp.com",
+                                        "image": 'https://donotifyme.herokuapp.com/img/bg/nearby.jpg'
+                                    },
+                                    "to": token
+                                }
+                        )
+                    }, function (error, response, body) {
+                        if (error) {
+                            console.error(error, response, body);
+                        } else if (response.statusCode >= 400) {
+                            console.error('HTTP Error: ' + response.statusCode + ' - ' + response.statusMessage + '\n' + body);
+                        } else {
+                            count++;
+                            console.log(count + '.Send to ' + obj.userDetail[0].firstName);
+                            if (count === tokencount) {
+                                callback(count);
+                                console.log("/////////////////////");
+                                console.log("Message send to >>" + count + ' Devices');
+                                console.log("/////////////////////");
+                            }
+
+                        }
+                    });
+                }
+
+
+
+            }, function (err) {
+                console.log("async inner each done");
+            });
+        },
+                function (err) {
+                    console.log("async.each done");
+                });
+
+
+
     }
 
 };

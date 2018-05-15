@@ -35,13 +35,9 @@ if ('serviceWorker' in navigator) {
         console.log("No Permission!! ");
     });
 
-
     messaging.onMessage(function (payload) {
         console.log('Message received. ', payload);
-        // ...
     });
-
-
 
     navigator.serviceWorker.register('firebase-messaging-sw.js')
             .then(function (registration) {
