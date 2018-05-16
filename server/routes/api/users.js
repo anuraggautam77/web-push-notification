@@ -9,6 +9,7 @@ const Fcm = require('../../models/fcm');
 const bcrypt = require('bcrypt');
 const Cryptr = require('cryptr');
 const jwt = require('jsonwebtoken');
+const request = require('request');
 const mongoose = require('mongoose');
 const path = require('path');
 
@@ -140,15 +141,16 @@ module.exports = (apiRoutes) => {
 
 
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
-        console.log(req.body);
+
+        var latlng = req.body.latlng;
+        var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=restaurant`;
+
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
         }, (error, data) => {
 
             if (data.length > 0) {
                 var obj = {};
-
-                var latlng = req.body.latlng;
                 obj.sub = true;
                 obj.lat = latlng.split('--')[0];
                 obj.lng = latlng.split('--')[1];
@@ -160,10 +162,12 @@ module.exports = (apiRoutes) => {
                             $set: obj
                         }, (data) => {
                     res.json({status: "200", message: "Upadte my location Scucessfully!!"});
+                    getnearbylocation(api,cryptr.decrypt(req.body.userId));
+                    
                 });
             } else {
                 var obj = {};
-                var latlng = req.body.latlng;
+
                 obj.sub = true;
                 obj.lat = latlng.split('--')[0];
                 obj.lng = latlng.split('--')[1];
@@ -172,13 +176,46 @@ module.exports = (apiRoutes) => {
                 obj.userid = cryptr.decrypt(req.body.userId);
                 new Geo(obj).save().then(() => {
                     res.json({status: "200", message: " Add my location Successfully!! !!!!"});
+                   getnearbylocation(api,cryptr.decrypt(req.body.userId));
                 });
             }
         });
+        
     });
 
 
-
+      function getnearbylocation(api,id){
+          
+         request(api, function (error, response, body) {
+            console.log('error:', error); // Print the error if one occurred
+          //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+          //  console.log('body:', body.results);
+            var detailData=[],body= JSON.parse(body);
+             body.results.forEach((obj,k)=>{
+                let count=(k+1);
+                if(k===0){
+                   detailData.push( count+")."  +obj.name);  
+                }else{
+                  detailData.push("\n"+ count+")."  +obj.name);
+                }
+                
+             });
+           
+                var obj = {};
+                   obj.nearby=detailData;
+                Geo.update( {'userid': id}, { $set: obj }, (data) => {
+                    
+                    console.log(data);
+                    
+                });
+           
+      
+           
+           
+           
+        });
+          
+      }
 
 
 

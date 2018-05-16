@@ -139,7 +139,7 @@ module.exports = class UserController {
                 });
     }
 
-    GeoToSubscriber() {
+    GeoToSubscriber(message, users, callback) {
 
         var count = 0, tokencount = 0;
         async.each(users, (obj, callbackfirst) => {
@@ -156,9 +156,9 @@ module.exports = class UserController {
                         body: JSON.stringify(
                                 {
                                     "notification": {
-                                        "title": "Your Nearby Store",
+                                        "title": "Nearby Store",
                                         //"body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
-                                        "body": "Hi " + _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName),
+                                        "body": "Hi " + _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName) +' \n '+ obj.nearby.slice(0, 6).join(),
                                         "icon": "https://donotifyme.herokuapp.com/img/bg/loc.png",
                                         "click_action": "https://donotifyme.herokuapp.com",
                                         "image": 'https://donotifyme.herokuapp.com/img/bg/nearby.jpg'
@@ -183,9 +183,7 @@ module.exports = class UserController {
 
                         }
                     });
-                }
-
-
+                } 
 
             }, function (err) {
                 console.log("async inner each done");

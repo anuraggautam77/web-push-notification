@@ -6,6 +6,7 @@ const GeoSchema = new mongoose.Schema ({
   lng: {type: String, default: null},    
   sub: {type: String, default: null},   
   imgurl:{type: String, default: null},
+  nearby:{type: Array, default: []},
   userid: {type: mongoose.Schema.Types.ObjectId,unique: true}
 });
  
