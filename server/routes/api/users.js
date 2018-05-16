@@ -144,7 +144,7 @@ module.exports = (apiRoutes) => {
 
         var latlng = req.body.latlng;
         var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=restaurant`;
-
+  
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
         }, (error, data) => {
@@ -185,9 +185,9 @@ module.exports = (apiRoutes) => {
 
 
       function getnearbylocation(api,id){
-          
+          console.log(api)
          request(api, function (error, response, body) {
-            console.log('error:', error); // Print the error if one occurred
+            console.log('error>>>>>>>:', error); // Print the error if one occurred
           //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
           //  console.log('body:', body.results);
             var detailData=[],body= JSON.parse(body);

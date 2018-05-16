@@ -32,6 +32,7 @@ class App extends Component {
         var mapUrl = "http://maps.google.com/maps/api/staticmap?center=";
         mapUrl = mapUrl + position.coords.latitude + ',' + position.coords.longitude + "&markers=" + ll;
         mapUrl = mapUrl + '&zoom=15&size=512x512&maptype=roadmap&sensor=false';
+       
         window.localStorage.setItem('lat-log', position.coords.latitude + "--" + position.coords.longitude);
         window.localStorage.setItem('mapImg', mapUrl);
 
@@ -40,24 +41,15 @@ class App extends Component {
     saveCurrentLocation() {
 
         if (window.localStorage.getItem('deviceToken') !== null && window.localStorage.getItem('lat-log') !== null) {
-            fetch('/api/whereiam', {
-                method: 'post',
-                headers: {'Content-Type': 'application/json'},
+            fetch('/api/whereiam', {method: 'post', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     latlng: window.localStorage.getItem('lat-log'),
                     imgUrl: window.localStorage.getItem('mapImg'),
                     userId: window.localStorage.getItem('userid'),
                     token: window.localStorage.getItem('deviceToken')
                 })
-            })
-                    .then(res => res.json())
-                    .then(json => {  console.log(json);  })
-
-
+            }).then(res => res.json()).then(json => {  console.log(json);  })
         }
-
-
-
     }
 
     mySubscriber(msg, data) {
@@ -93,7 +85,7 @@ class App extends Component {
     render() {
         return (
                 <div>
-                    <Routing islogin={this.state.isLoggedIn} />
+                     <Routing islogin={this.state.isLoggedIn} />
                 </div>);
     }
 }
