@@ -232,6 +232,7 @@ module.exports = (apiRoutes) => {
                 res.json({status: error});
             }
 
+
             if (results.length > 0) {
                 var contr = new UserController();
                 contr.GeoToSubscriber(req.body, results, function (data) {

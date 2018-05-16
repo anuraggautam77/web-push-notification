@@ -32,12 +32,6 @@ class App extends Component {
         var mapUrl = "http://maps.google.com/maps/api/staticmap?center=";
         mapUrl = mapUrl + position.coords.latitude + ',' + position.coords.longitude + "&markers=" + ll;
         mapUrl = mapUrl + '&zoom=15&size=512x512&maptype=roadmap&sensor=false';
-
-        console.log(mapUrl);
-        console.log(position.coords.latitude);
-        console.log(position.coords.longitude);
-
-
         window.localStorage.setItem('lat-log', position.coords.latitude + "--" + position.coords.longitude);
         window.localStorage.setItem('mapImg', mapUrl);
 

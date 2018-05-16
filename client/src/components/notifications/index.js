@@ -8,6 +8,8 @@ class DeviceList extends Component {
             isnotify: 'dn',
             text: 'Hi {{name}}, Nice to have your',
             title: 'Lets Connect',
+            lbanner:false,
+            pbanner:false,
             isdisable: true
         };
         //  this.refs.senbutton.setAttribute('disable','disable');
@@ -16,9 +18,7 @@ class DeviceList extends Component {
     }
 
     sendNotification() {
-
-
-        console.log(this.state);
+ 
         if (this.state.ptype == '') {
             alert('Please Select Catageory !')
             return false;
@@ -36,28 +36,25 @@ class DeviceList extends Component {
 
         });
 
-    };
-    
-    
-    
-    sendGeoNotification(){
-        
-         fetch('/api/geopostnotification', {
+    }
+    ;
+            sendGeoNotification() {
+
+        fetch('/api/geopostnotification', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({})
+            body: JSON.stringify({lbanner:this.state.lbanner})
         }
         ).then(res => res.json()).then(json => {
             console.log(json)
             this.setState({'isdisable': false, isnotify: 'alert alert-success bd', "alertmessage": json.message});
 
         });
-        
-        
-    };
-    
 
-    render() {
+
+    }
+    ;
+            render() {
         return (
                 <div className="col-md-12">
                 
@@ -77,16 +74,25 @@ class DeviceList extends Component {
                         let disable = true;
                         if (event.target.value !== '') {
                                 disable = false;
-                                                                } 
-                                            this.setState({
-                                                            'ptype': event.target.value, 'isdisable': disable })}} 
+                                                                                } 
+                                            this.setState({ 'ptype': event.target.value, 'isdisable': disable })}} 
                                             className="form-control">
                                             <option value="">Select one</option>
                                             <option value="c">Coupons</option>
                                             <option value="p">Promotions</option>
                                         </select>
+                
+                                        
                                         <br/>
+                                        <p> Show Banner in Notification:  <input type="checkbox" 
+                                        ref='showPbanner' onChange={(event) => {
+                                             this.setState({ 'pbanner': event.target.checked});
+                                       }}
+                                        /></p>  
+                                       
+                                       
                                         <br/>
+                
                                         <p> Add your customize Notification Message below</p>  
                                         <input type="text"
                                                id="title" 
@@ -112,7 +118,7 @@ class DeviceList extends Component {
                                                 type="button" 
                                                 onClick={ (e) => {
                                                     this.sendNotification()
-                                                  }}
+                                                                  }}
                                                 className="btn btn-primary">Send Notification</button> 
                                     </div>
                                 </div>
@@ -126,10 +132,18 @@ class DeviceList extends Component {
                             <div className="panel-body">
                                 <div className="row">
                                     <div className="col-md-12"> 
+                                    
+                                        <p> Show Banner in Notification : <input type="checkbox" ref='showLbanner' 
+                                         onChange={(event) => {
+                                             this.setState({ 'lbanner': event.target.checked});
+                                       }}
+                                           /></p>  
+                                        <br/>
+                                        
                                         <button ref='nearbybutton' 
-                                        onClick={ (e) => {
-                                                    this.sendGeoNotification()
-                                                  }}
+                                                onClick={ (e) => {
+                                                        this.sendGeoNotification()
+                                                                  }}
                                                 className="btn btn-primary">Send Notification</button> 
                                     </div>
                                 </div>
@@ -143,7 +157,7 @@ class DeviceList extends Component {
                 
                 
                 </div>
-                                                );
+                                                    );
                 }
             }
 

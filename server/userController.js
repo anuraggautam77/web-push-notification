@@ -104,7 +104,8 @@ module.exports = class UserController {
                                         "body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
                                         "icon": "https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png",
                                         "click_action": "https://donotifyme.herokuapp.com",
-                                        "image": 'https://donotifyme.herokuapp.com/img/bg/bg.jpg'
+                                        "image": 'https://donotifyme.herokuapp.com/img/bg/bg.jpg',
+                                        "showbanner":message.pbanner
                                     },
                                     "to": token
                                 }
@@ -140,11 +141,14 @@ module.exports = class UserController {
     }
 
     GeoToSubscriber(message, users, callback) {
-
+ 
         var count = 0, tokencount = 0;
         async.each(users, (obj, callbackfirst) => {
             async.each(obj.token, (token, callbacksecond) => {
                 if (token !== null) {
+                 
+                    
+                   if( obj.nearby!==undefined && obj.nearby.length>0){
                     tokencount++;
                     request({
                         url: 'https://fcm.googleapis.com/fcm/send',
@@ -161,7 +165,8 @@ module.exports = class UserController {
                                         "body": "Hi " + _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName) +' \n '+ obj.nearby.slice(0, 6).join(),
                                         "icon": "https://donotifyme.herokuapp.com/img/bg/loc.png",
                                         "click_action": "https://donotifyme.herokuapp.com",
-                                        "image": 'https://donotifyme.herokuapp.com/img/bg/nearby.jpg'
+                                        "image": 'https://donotifyme.herokuapp.com/img/bg/nearby.jpg',
+                                        "showbanner":message.lbanner
                                     },
                                     "to": token
                                 }
@@ -183,6 +188,8 @@ module.exports = class UserController {
 
                         }
                     });
+                    
+                        }
                 } 
 
             }, function (err) {
