@@ -6,7 +6,7 @@ var filesToCache = [
     '/js/app.js',
     '/img/bg/',
     '/img/icons/'
-   
+
 ]
 self.addEventListener('install', function (event) {
     //  console.log('[Service Worker] Installing Service Worker ...', event);
@@ -19,7 +19,7 @@ self.addEventListener('install', function (event) {
 
 });
 
- 
+
 
 
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
@@ -40,22 +40,26 @@ firebase.initializeApp(config);
 //const messaging = firebase.messaging();
 
 //messaging.setBackgroundMessageHandler(function (payload) {
-   
+
 //});
 
 
 self.addEventListener('push', function (event) {
     console.log('Push Notification Received.');
-   
+
     var eventData = event.data.text();
     var obj = JSON.parse(eventData); //Parse the received JSON object.
-   
-    const title = obj.notification.title;
     const options = {
-        body: obj.notification.body,
-        icon: obj.notification.icon,
-        image: obj.data['gcm.notification.image']
-    };
+           icon: obj.notification.icon,
+     };
+
+    if (obj.data['gcm.notification.showbanner'] === 'true') {
+          options.image=obj.data['gcm.notification.image'];
+     }else{
+            options.body=obj.notification.body;
+     }
+
+    const title = obj.notification.title;
 
     event.waitUntil(self.registration.showNotification(title, options));
 });
