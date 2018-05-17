@@ -13,6 +13,9 @@ const request = require('request');
 const mongoose = require('mongoose');
 const path = require('path');
 
+const promoimgages = path.resolve("dist/img/promoimages");
+const fs = require('fs');
+
 const saltRounds = 10;
 const SECRETKEY = 'iamnewinthistechstack';
 const USER_ID_ENCRYPT_DECTYPT = 'user_id_incrption_decription';
@@ -43,7 +46,8 @@ const SERVICE_CONST = {
     POST_NOTIFICATION: 'postnotification',
 
     POST_GEO: 'geopostnotification',
-    WHERE_I_AM: 'whereiam'
+    WHERE_I_AM: 'whereiam',
+    GET_PROMO_IMAGES: 'getpromoimages'
 };
 let cryptr = new Cryptr(USER_ID_ENCRYPT_DECTYPT);
 module.exports = (apiRoutes) => {
@@ -77,6 +81,17 @@ module.exports = (apiRoutes) => {
 
         return obj;
     }
+
+
+
+
+    apiRoutes.get(`/${SERVICE_CONST.GET_PROMO_IMAGES}`, function (req, res) {
+        var arrofImages = [];
+        fs.readdirSync(promoimgages).forEach((file, k) => {
+           arrofImages.push(file);
+        });
+        res.status(200).json({status: 200, images: arrofImages});
+    });
 
 
     apiRoutes.post(`/${SERVICE_CONST.AUTH_VALIDATE}`, function (req, res) {
@@ -144,7 +159,7 @@ module.exports = (apiRoutes) => {
 
         var latlng = req.body.latlng;
         var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
-  
+
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
         }, (error, data) => {
@@ -162,8 +177,8 @@ module.exports = (apiRoutes) => {
                             $set: obj
                         }, (data) => {
                     res.json({status: "200", message: "Upadte my location Scucessfully!!"});
-                    getnearbylocation(api,cryptr.decrypt(req.body.userId));
-                    
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId));
+
                 });
             } else {
                 var obj = {};
@@ -176,46 +191,46 @@ module.exports = (apiRoutes) => {
                 obj.userid = cryptr.decrypt(req.body.userId);
                 new Geo(obj).save().then(() => {
                     res.json({status: "200", message: " Add my location Successfully!! !!!!"});
-                   getnearbylocation(api,cryptr.decrypt(req.body.userId));
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId));
                 });
             }
         });
-        
+
     });
 
 
-      function getnearbylocation(api,id){
-          console.log(api)
-         request(api, function (error, response, body) {
+    function getnearbylocation(api, id) {
+        console.log(api)
+        request(api, function (error, response, body) {
             console.log('error>>>>>>>:', error); // Print the error if one occurred
-          //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-           console.log('body:', body.results);
-            var detailData=[],body= JSON.parse(body);
-             body.results.forEach((obj,k)=>{
-                let count=(k+1);
-                if(k===0){
-                   detailData.push( count+")."  +obj.name);  
-                }else{
-                  detailData.push("\n"+ count+")."  +obj.name);
+            //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+            console.log('body:', body.results);
+            var detailData = [], body = JSON.parse(body);
+            body.results.forEach((obj, k) => {
+                let count = (k + 1);
+                if (k === 0) {
+                    detailData.push(count + ")." + obj.name);
+                } else {
+                    detailData.push("\n" + count + ")." + obj.name);
                 }
-                
-             });
-           
-                var obj = {};
-                   obj.nearby=detailData;
-                Geo.update( {'userid': id}, { $set: obj }, (data) => {
-                    
-                    console.log(data);
-                    
-                });
-           
-      
-           
-           
-           
+
+            });
+
+            var obj = {};
+            obj.nearby = detailData;
+            Geo.update({'userid': id}, {$set: obj}, (data) => {
+
+                console.log(data);
+
+            });
+
+
+
+
+
         });
-          
-      }
+
+    }
 
 
 

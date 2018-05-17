@@ -8,17 +8,38 @@ class DeviceList extends Component {
             isnotify: 'dn',
             text: 'Hi {{name}}, Nice to have your',
             title: 'Lets Connect',
-            lbanner:false,
-            pbanner:false,
-            isdisable: true
+            lbanner: false,
+            pbanner: false,
+            isdisable: true,
+            bodytext: 'db',
+            imageicon: 'dn',
+            selectedimg:'',
+            arrImage:[]
         };
         //  this.refs.senbutton.setAttribute('disable','disable');
         this.handleSignIn = this.sendNotification.bind(this);
 
+        this.divStyle = {
+            'listStyle': 'none',
+            'marginLeft': '-40px',
+            'marginTop': '20px'
+        };
+
+    }
+
+    componentWillMount() {
+
+        fetch(`/api/getpromoimages`, {method: 'get', headers: {'Content-Type': 'application/json'}}
+        ).then(res => res.json()
+        ).then(json => {
+            if (json.hasOwnProperty('images')) {
+                this.setState({arrImage: json.images});
+            }
+        });
     }
 
     sendNotification() {
- 
+
         if (this.state.ptype == '') {
             alert('Please Select Catageory !')
             return false;
@@ -32,17 +53,16 @@ class DeviceList extends Component {
         }
         ).then(res => res.json()).then(json => {
             this.setState({'isdisable': false, isnotify: 'alert alert-success bd', "alertmessage": json.message});
-
         });
 
     }
-    ;
-            sendGeoNotification() {
+
+    sendGeoNotification() {
 
         fetch('/api/geopostnotification', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({lbanner:this.state.lbanner})
+            body: JSON.stringify({lbanner: this.state.lbanner,selectedimg:this.state.selectedimg})
         }
         ).then(res => res.json()).then(json => {
             console.log(json)
@@ -52,8 +72,39 @@ class DeviceList extends Component {
 
 
     }
-    ;
-            render() {
+    
+    
+    
+     commentDatalist(list){
+     
+       let commentlist= list.map((obj,i) =>{
+              return (
+                      <li className="col-sm-3" attr={obj}  key={i} 
+                    onClick={(event) => {
+                         this.setState({'border':'2px solid red',key:i,'selectedimg':(event.currentTarget).getAttribute('attr')});
+                   }} 
+            >
+                       <a className="thumbnail" 
+                       style={
+              (()=>{
+                  if(this.state.key===i){
+                                         return ({border:this.state.border})
+                  }
+              })()
+                           } 
+                           
+                        id="carousel-selector-0">
+                             <img src={`img/promoimages/${obj}`} style={{'width':'100px','height':'100px'}} />
+                      </a>
+            </li>
+             );
+                                
+         }); 
+                            
+        return commentlist;
+    }
+
+    render() {
         return (
                 <div className="col-md-12">
                 
@@ -68,60 +119,75 @@ class DeviceList extends Component {
                                 <div className="row">
                                     <div className="col-md-12">
                                         Select Catageory:
-                                        <select 
-                                            onChange={(event) => {
+                        <select onChange={(event) => {
                         let disable = true;
                         if (event.target.value !== '') {
                                 disable = false;
-                                                                                } 
-                                            this.setState({ 'ptype': event.target.value, 'isdisable': disable })}} 
-                                            className="form-control">
+                             this.setState({ 'ptype': event.target.value, 'isdisable': disable })
+                        }}} 
+                                           
+                        className="form-control">
                                             <option value="">Select one</option>
                                             <option value="c">Coupons</option>
                                             <option value="p">Promotions</option>
                                         </select>
                 
-                                        
-                                        <br/>
-                                        <p> Show Banner in Notification:  <input type="checkbox" 
-                                        ref='showPbanner' onChange={(event) => {
-                                             this.setState({ 'pbanner': event.target.checked});
-                                       }}
-                                        /></p>  
-                                       
-                                       
+                
                                         <br/>
                 
+                
                                         <p> Add your customize Notification Message below</p>  
-                                        <input type="text"
-                                               id="title" 
-                                               value ={
-                                this.state.title}
-                                               className="form-control" 
+                                        <input type="text" id="title"   value ={ this.state.title}  className="form-control" 
                                                placeholder="Title"
                                                onChange={(event) => {
-                                    this.setState({title: event.target.value})}} 
-                                               />
+                                    this.setState({title: event.target.value})}}   />
                                         <br/> 
-                                        <textarea type="text" id="body" 
-                                                  value ={
-                                        this.state.text} 
-                                                  className="form-control"
-                                                  placeholder="Hi {{name}}" 
-                                                  onChange={(event) => {
-                                            this.setState({text: event.target.value})}} 
-                                                  />  
+                                        <p> Show Banner in Notification: 
+                                            <input type="checkbox"  ref='showPbanner'  onChange={
+                                        (event) => {
+                                            if (event.target.checked) {
+                                                this.setState({'pbanner': event.target.checked, 'bodytext': 'dn', 'imageicon': 'db'});
+                                                   }else{
+                                                       this.setState({'pbanner': event.target.checked, 'bodytext': 'db', 'imageicon': 'dn'});
+                                                   }
+                
+                                                   }
+                                                   }
+                                                   /></p>  
+                
+                
+                                        <br/>
+                
+                   <div  id="slider-thumbs" className={this.state.imageicon}>
+                
+                     <ul  style={this.divStyle}  className="hide-bullets">
+                            { this.commentDatalist (this.state.arrImage) } 
+                                               
+                        </ul>
+                  </div>
+                                        <br/>
+                
+                                        <div className={ this.state.bodytext}>
+                                            <textarea type="text" id="body"  className="form-control"  placeholder="Hi {{name}}" 
+                                                      value ={ this.state.text}  onChange={(event) => {
+                                                                this.setState({text: event.target.value})}}   />  
+                                        </div>    
                                         <br/> 
-                                        <button ref='senbutton' disabled={
-                                                this.state.isdisable}
-                                                type="button" 
-                                                onClick={ (e) => {
-                                                    this.sendNotification()
-                                                                  }}
-                                                className="btn btn-primary">Send Notification</button> 
+                
+                                        <div style={
+                                                                    {'clear': 'both'}}>
+                                            <button ref='senbutton' disabled={ this.state.isdisable}
+                                                    type="button"  onClick={ (e) => {
+                                                                            this.sendNotification()
+                                  }}
+                                                    className="btn btn-primary">Send Notification</button> 
+                                        </div>
+                
                                     </div>
                                 </div>
                             </div>
+                
+                
                         </div>
                     </div>
                 
@@ -131,18 +197,20 @@ class DeviceList extends Component {
                             <div className="panel-body">
                                 <div className="row">
                                     <div className="col-md-12"> 
-                                    
+                
                                         <p> Show Banner in Notification : <input type="checkbox" ref='showLbanner' 
-                                         onChange={(event) => {
-                                             this.setState({ 'lbanner': event.target.checked});
-                                       }}
-                                           /></p>  
+                                                                                 onChange={
+                                                                            (event) => {
+                                                                                this.setState({'lbanner': event.target.checked});
+                                                                                 }}
+                                                                                 /></p>  
                                         <br/>
-                                        
+                
                                         <button ref='nearbybutton' 
-                                                onClick={ (e) => {
-                                                        this.sendGeoNotification()
-                                                                  }}
+                                                onClick={
+                                                                                    (e) => {
+                                                                                        this.sendGeoNotification()
+                                                                                                                                                                                  }}
                                                 className="btn btn-primary">Send Notification</button> 
                                     </div>
                                 </div>
@@ -156,11 +224,11 @@ class DeviceList extends Component {
                 
                 
                 </div>
-                                                    );
-                }
-            }
+                                                                                    );
+                                }
+                            }
 
-            export default DeviceList;
+                            export default DeviceList;
 
 
 
