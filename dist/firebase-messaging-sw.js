@@ -10,8 +10,7 @@ var filesToCache = [
 ]
 self.addEventListener('install', function (event) {
     //  console.log('[Service Worker] Installing Service Worker ...', event);
-    event.waitUntil(
-            caches.open(cacheName).then(function (cache) {
+    event.waitUntil( caches.open(cacheName).then(function (cache) {
         //  console.log('[ServiceWorker] Caching app shell');
         return cache.addAll(filesToCache);
     })
@@ -63,3 +62,42 @@ self.addEventListener('push', function (event) {
 
     event.waitUntil(self.registration.showNotification(title, options));
 });
+
+
+//Adding `notification` click event listener
+self.addEventListener('notificationclick', (event) => {
+  var url = 'https://donotifyme.herokuapp.com/';
+
+  //Listen to custom action buttons in push notification
+ /* if (event.action === 'yes') {
+    console.log('I ♥ this app!');
+  }
+  else if (event.action === 'no') {
+    console.warn('I don\'t like this app');
+  }
+ */
+  event.notification.close(); //Close the notification
+
+  //To open the app after clicking notification
+  event.waitUntil(
+    clients.matchAll({ type: 'window' })
+    .then((clients) => {
+      for (var i = 0; i < clients.length; i++) {
+        var client = clients[i];
+        //If site is opened, focus to the site
+        if (client.url === url && 'focus' in client) {
+          return client.focus();
+        }
+      }
+
+      //If site is cannot be opened, open in new window
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+  );
+});
+

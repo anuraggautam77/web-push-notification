@@ -1,5 +1,17 @@
 # FCM Push Notification 
 
+# JavaScript Stack 
+
+[![PushNotification](/client/public/img/techstack/push-notification.PNG)] 
+[![React](/client/public/img/techstack/react.png)](https://facebook.github.io/react/)
+[![React Router](/client/public/img/techstack/react-router.png)](https://github.com/ReactTraining/react-router)
+[![Webpack](/client/public/img/techstack/webpack.png)](https://webpack.github.io/)
+[![Bootstrap](/client/public/img/techstack/bootstrap.png)](http://getbootstrap.com/)
+[![JWT](/client/public/img/techstack/jwt.PNG)](https://jwt.io/)
+[![PWA](/client/public/img/techstack/pwa.PNG)]
+
+
+
 - [PWA](https://developers.google.com/web/progressive-web-apps/)  PWA Implemenation
 - [FCM](https://firebase.google.com/docs/cloud-messaging/) FCM (FireBase Cloud Message) FireBase Push Notification to Devices
 - Google Geo Location api for getting near by store. 
@@ -44,5 +56,8 @@ npm run start:dev
 
 - [Click here - Do Notify me](https://donotifyme.herokuapp.com)
 
+ ## Credits
+
+Created by [@anuraggautam77](https://www.linkedin.com/in/anuraggautam77/)
  
 
