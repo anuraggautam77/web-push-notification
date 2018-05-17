@@ -2,7 +2,7 @@
 
 # JavaScript Stack 
 
-[![PushNotification](/client/public/img/techstack/notification.png)] 
+[![PushNotification](/client/public/img/techstack/notification1.png)] 
 [![React](/client/public/img/techstack/react.png)](https://facebook.github.io/react/)
 [![React Router](/client/public/img/techstack/react-router.png)](https://github.com/ReactTraining/react-router)
 [![Webpack](/client/public/img/techstack/webpack.png)](https://webpack.github.io/)
