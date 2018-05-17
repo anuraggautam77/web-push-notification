@@ -11,8 +11,9 @@ class MainPage extends Component {
             currentuser: window.localStorage.getItem('userid'),
             isnotify: 'dn',
             alertmessage: '',
-            lng: '77.201217',
-            lat: '28.633857'
+            lng: '',
+            lat: '',
+            message:''
         };
         PubSub.subscribe('LANDING_MESSGAE', (type, message) => {
             this.setState({"alertmessage": message, isnotify: 'alert alert-success bd'});
@@ -38,6 +39,9 @@ class MainPage extends Component {
                 })
             }).then(res => res.json()).then(json => {
                 console.log(json);
+                if(json.status=='200'){
+                      this.setState({ isnotify: 'alert alert-success bd', "alertmessage": 'Update new location Scucessfully!!'});
+                }
             })
         }
     }
@@ -45,6 +49,10 @@ class MainPage extends Component {
     render() {
         return (
                     <div className="main-landing row content">
+                     <div className={` ${this.state.isnotify} `}>
+                        <strong>{this.state.alertmessage}</strong>
+                    </div>
+            
                     {
                             (() => {
                             if (this.state.currentuser) {
@@ -60,19 +68,30 @@ class MainPage extends Component {
                                                                 <input ref='lat' 
                                                                        onChange={(event) => {
                                                         this.setState({lat: event.target.value})}}
-                                                                       className="form-control" type="text"  placeholder="lat" /> 
+                                                                       className="form-control" type="text"  placeholder="Latitude" /> 
                                                                 <input ref='lng'
                                                                        onChange={
                                                             (event) => {
                                                                 this.setState({lng: event.target.value})}}
-                                                                       className="form-control" type="text"  placeholder="lng" />
+                                                                       className="form-control" type="text"  placeholder="Longitude" />
                                                                 <br/>
                                                                 <button  className='btn btn-primary' ref="crntloc" onClick={
-                                                                        this.handleCurrentLocation} type='button'>Set New Location </button>
-                                                            </div>
+                                                                        this.handleCurrentLocation} type='button'>Set New Location</button>
+                                                              
+                                        
+                                       <br/><br/>
+                                       <h3>Delhi</h3>   
+                                       Latitude: <b>28.633857</b>  &nbsp; &nbsp;&nbsp; Longitude: <b>77.201217</b>  <br/><br/>
+                                       <h3>Dallas (USA)</h3>
+                                       Latitude: <b>32.7909263</b>     &nbsp; &nbsp;&nbsp; Longitude : <b>-96.8200647</b>  
+                                       
+                                        
+                                        
+                                        
+                                        </div>
                                                             
-            lng: '77.201217',
-            lat: '28.633857'
+        
+            
                                                             
                                                             
                                                             

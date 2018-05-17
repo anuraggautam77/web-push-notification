@@ -31,7 +31,6 @@ class DeviceList extends Component {
             body: JSON.stringify(this.state)
         }
         ).then(res => res.json()).then(json => {
-            console.log(json)
             this.setState({'isdisable': false, isnotify: 'alert alert-success bd', "alertmessage": json.message});
 
         });
