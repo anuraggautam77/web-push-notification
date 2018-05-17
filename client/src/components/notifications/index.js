@@ -79,9 +79,9 @@ class DeviceList extends Component {
      
        let commentlist= list.map((obj,i) =>{
               return (
-                      <li className="col-sm-3" attr={obj}  key={i} 
+                      <li className="col-sm-3" style={{'marginBottom':'20px'}} attr={obj}  key={i} 
                     onClick={(event) => {
-                         this.setState({'border':'2px solid red',key:i,'selectedimg':(event.currentTarget).getAttribute('attr')});
+                         this.setState({'border':'1px solid red',key:i,'selectedimg':(event.currentTarget).getAttribute('attr')});
                    }} 
             >
                        <a className="thumbnail" 
