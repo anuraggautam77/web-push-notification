@@ -8,7 +8,7 @@
 [![Webpack](/client/public/img/techstack/webpack.png)](https://webpack.github.io/)
 [![Bootstrap](/client/public/img/techstack/bootstrap.png)](http://getbootstrap.com/)
 [![JWT](/client/public/img/techstack/jwt.PNG)](https://jwt.io/)
-[![PWA](/client/public/img/techstack/pwa.PNG)]
+[![PWA](/client/public/img/techstack/pwa.png)]
 
 
 
