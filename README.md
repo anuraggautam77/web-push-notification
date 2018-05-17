@@ -3,7 +3,6 @@
 # JavaScript Stack 
 
 [![PushNotification](/client/public/img/techstack/notification1.png)]()
-[![Nodejs](/client/public/img/techstack/nodejs.png)](https://nodejs.org/)
 [![ExpressJs](/client/public/img/techstack/express.png)](https://expressjs.com/)
 [![React](/client/public/img/techstack/react.png)](https://facebook.github.io/react/)
 [![React Router](/client/public/img/techstack/react-router.png)](https://github.com/ReactTraining/react-router)
@@ -11,8 +10,6 @@
 [![Bootstrap](/client/public/img/techstack/bootstrap.png)](http://getbootstrap.com/)
 [![JWT](/client/public/img/techstack/jwt.PNG)](https://jwt.io/)
 [![PWA](/client/public/img/techstack/pwa.png)]()
-[![mongodb](/client/public/img/techstack/mongodb.png)](https://www.mongodb.com/)
-
 
 
 - [PWA](https://developers.google.com/web/progressive-web-apps/)  PWA Implemenation
