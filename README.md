@@ -2,13 +2,13 @@
 
 # JavaScript Stack 
 
-[![PushNotification](/client/public/img/techstack/notification1.png)]
+[![PushNotification](/client/public/img/techstack/notification1.png)]()
 [![React](/client/public/img/techstack/react.png)](https://facebook.github.io/react/)
 [![React Router](/client/public/img/techstack/react-router.png)](https://github.com/ReactTraining/react-router)
 [![Webpack](/client/public/img/techstack/webpack.png)](https://webpack.github.io/)
 [![Bootstrap](/client/public/img/techstack/bootstrap.png)](http://getbootstrap.com/)
 [![JWT](/client/public/img/techstack/jwt.PNG)](https://jwt.io/)
-[![PWA](/client/public/img/techstack/pwa.png)]
+[![PWA](/client/public/img/techstack/pwa.png)]()
 
 
 
