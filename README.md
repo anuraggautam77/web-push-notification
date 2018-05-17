@@ -2,6 +2,7 @@
 
 - [PWA](https://developers.google.com/web/progressive-web-apps/)  PWA Implemenation
 - [FCM](https://firebase.google.com/docs/cloud-messaging/) FCM (FireBase Cloud Message) FireBase Push Notification to Devices
+- Google Geo Location api for getting near by store. 
 
 
 # MERN-boilerplate
@@ -41,10 +42,7 @@ npm run start:dev
 
 ## Demo Link
 
-- [Click here](https://donotifyme.herokuapp.com)
+- [Click here - Do Notify me](https://donotifyme.herokuapp.com)
 
-
-Screenshot
-   Cominng soon..
-
+ 
 
