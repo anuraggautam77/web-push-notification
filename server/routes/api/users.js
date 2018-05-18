@@ -219,15 +219,8 @@ module.exports = (apiRoutes) => {
             var obj = {};
             obj.nearby = detailData;
             Geo.update({'userid': id}, {$set: obj}, (data) => {
-
                 console.log(data);
-
             });
-
-
-
-
-
         });
 
     }

@@ -37,6 +37,7 @@ export default class Routing extends Component {
                     <Route path="/profile/:id"  component={Profile} />
                     <Route path="/post/:id"  component={PostDetail} />
                 </div>
+                <div className="footer-continer">©&nbsp;2018&nbsp; All Rights Reserved</div>
              </div>      
             </Router>
         )

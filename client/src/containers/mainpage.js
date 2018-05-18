@@ -13,7 +13,9 @@ class MainPage extends Component {
             alertmessage: '',
             lng: '',
             lat: '',
-            message:''
+            message: '',
+            city: ''
+
         };
         PubSub.subscribe('LANDING_MESSGAE', (type, message) => {
             this.setState({"alertmessage": message, isnotify: 'alert alert-success bd'});
@@ -24,6 +26,35 @@ class MainPage extends Component {
         });
 
         this.handleCurrentLocation = this.handleCurrentLocation.bind(this);
+        this.getLatlong = this.getLatlong.bind(this);
+
+    }
+
+    getLatlong(event) {
+        var self = this, geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'address': event.target.value}, (results, status) => {
+            if (status == google.maps.GeocoderStatus.OK) {
+                self.setState({'lng': results[0].geometry.location.lng(), 'lat': results[0].geometry.location.lat()})
+                //  alert("location : " + results[0].geometry.location.lat() + " " +results[0].geometry.location.lng());
+                var ll = [results[0].geometry.location.lat(), results[0].geometry.location.lng()];
+
+                var myLatLng = {lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+
+                var map = new google.maps.Map(document.getElementById('googleMap'), {
+                    zoom: 15,
+                    center: myLatLng
+                });
+
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    map: map
+                });
+ 
+            } else {
+                self.setState({'lng': '', 'lat': ''})
+                console.log("Something got wrong " + status);
+            }
+        });
 
     }
 
@@ -39,8 +70,8 @@ class MainPage extends Component {
                 })
             }).then(res => res.json()).then(json => {
                 console.log(json);
-                if(json.status=='200'){
-                      this.setState({ isnotify: 'alert alert-success bd', "alertmessage": 'Update new location Scucessfully!!'});
+                if (json.status == '200') {
+                    this.setState({isnotify: 'alert alert-success bd', "alertmessage": 'Update new location Scucessfully!!'});
                 }
             })
         }
@@ -48,78 +79,68 @@ class MainPage extends Component {
 
     render() {
         return (
-                    <div className="main-landing row content">
-            
-        <div class="banner-container">
-        
-        </div>
-            
-            
-                     <div className={` ${this.state.isnotify} `}>
+                <div className="main-landing row content">
+                
+                    <div className="banner-container"></div>
+                
+                
+                    <div className={` ${this.state.isnotify} `}>
                         <strong>{this.state.alertmessage}</strong>
                     </div>
-            
+                
                     {
-                            (() => {
+                        (() => {
                             if (this.state.currentuser) {
                                 return (
-                                                <div className="landing-page">
-                                                   {/* <div className="col-md-3 col-sm-6 proilecard"> 
-                                                        <Profilecard/>
-                                                    </div>*/ }
-              
-                
-                                                    <div className="col-md-6 col-sm-6">
+                                            <div className="landing-page">
+                                        
+                                                <div className="col-md-6 col-sm-6">
                                                     <div className="title-col">Set your location</div>
-                                                        <div className="panel panel-default">
-                                                            <div className="panel-heading">
-                                                                <br/>
-                                                                <input ref='lat' 
-                                                                       onChange={(event) => {
-                                                        this.setState({lat: event.target.value})}}
-                                                                       className="form-control input-first" type="text"  placeholder="Latitude" /> 
-                                                                <input ref='lng'
-                                                                       onChange={
-                                                            (event) => {
-                                                                this.setState({lng: event.target.value})}}
-                                                                       className="form-control" type="text"  placeholder="Longitude" />
-                                                                <br/>
-                                                                <button  className='btn btn-primary' ref="crntloc" onClick={
-                                                                        this.handleCurrentLocation} type='button'>Set New Location</button>
-                                                              
+                                                    <div className="panel panel-default">
                                         
-                                       <br/><br/>
-                                       <h3>Delhi</h3>   
-                                       Latitude: <b>28.633857</b>  &nbsp; &nbsp;&nbsp; Longitude: <b>77.201217</b>  <br/><br/>
-                                       <h3>Dallas (USA)</h3>
-                                       Latitude: <b>32.7909263</b>     &nbsp; &nbsp;&nbsp; Longitude : <b>-96.8200647</b>  
-                                       
+                                                        <div className="panel-heading">
+                                                            <br/>
+                                        
+                                                            <input ref='cityname'  onBlur={this.getLatlong}
+                                                                   className="form-control input-first" type="text" 
+                                                                   placeholder="City Name,Country Name" /> 
+                                        
+                                                            <input ref='lat' 
+                                                                   value={this.state.lat}
+                                                                   onChange={(event) => {
+                                                    this.setState({lat: event.target.value})}}
+                                                                   className="form-control input-first" type="text"  placeholder="Latitude" /> 
+                                                            <input ref='lng'
+                                                                   value={
+                                                        this.state.lng}
+                                                                   onChange={
+                                                        (event) => {
+                                                            this.setState({lng: event.target.value})}}
+                                                                   className="form-control" type="text"  placeholder="Longitude" />
+                                                            <br/>
+                                                            <button  className='btn btn-primary' ref="crntloc" onClick={
+                                                                this.handleCurrentLocation} type='button'>Set New Location</button>
+                                                            <div id="googleMap" style={{'width': '600px', 'height': '600px'}}></div>                       
+                                                            <br/>                  
                                         
                                         
                                         
-                                        </div>
-                                                            
-        
-            
-                                                            
-                                                            
-                                                            
                                                         </div>
-                                                   
                                                     </div>
-                                                    <div className="col-md-6 col-sm-6 proilecard">
-                                                     <div className="title-col">Subscribe Notification</div>
-                                                        <Subscription/>
-                                                    </div>
-                                            
+                                        
                                                 </div>
+                                                <div className="col-md-6 col-sm-6 proilecard">
+                                                    <div className="title-col">Subscribe Notification</div>
+                                                    <Subscription/>
+                                                </div>
+                                            </div>
                                                                 );
                     }else{
-                                                            return (
+                                                                return (
                                                                             <div className="col-md-12 col-sm-12">
                                                                                 Log-out User    
                                                                             </div>
-                                                                    );
+                                                                        );
                     }
                 
                     })()
@@ -128,8 +149,8 @@ class MainPage extends Component {
                 </div>
 
 
-                                    );
+                                        );
+                }
             }
-        }
 
-        export default MainPage;
+            export default MainPage;
