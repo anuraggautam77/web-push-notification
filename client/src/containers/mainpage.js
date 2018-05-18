@@ -49,6 +49,12 @@ class MainPage extends Component {
     render() {
         return (
                     <div className="main-landing row content">
+            
+        <div class="banner-container">
+        
+        </div>
+            
+            
                      <div className={` ${this.state.isnotify} `}>
                         <strong>{this.state.alertmessage}</strong>
                     </div>
@@ -58,17 +64,20 @@ class MainPage extends Component {
                             if (this.state.currentuser) {
                                 return (
                                                 <div className="landing-page">
-                                                    <div className="col-md-3 col-sm-6 proilecard"> 
+                                                   {/* <div className="col-md-3 col-sm-6 proilecard"> 
                                                         <Profilecard/>
-                                                    </div>
+                                                    </div>*/ }
+              
+                
                                                     <div className="col-md-6 col-sm-6">
+                                                    <div className="title-col">Set your location</div>
                                                         <div className="panel panel-default">
                                                             <div className="panel-heading">
                                                                 <br/>
                                                                 <input ref='lat' 
                                                                        onChange={(event) => {
                                                         this.setState({lat: event.target.value})}}
-                                                                       className="form-control" type="text"  placeholder="Latitude" /> 
+                                                                       className="form-control input-first" type="text"  placeholder="Latitude" /> 
                                                                 <input ref='lng'
                                                                        onChange={
                                                             (event) => {
@@ -98,7 +107,8 @@ class MainPage extends Component {
                                                         </div>
                                                    
                                                     </div>
-                                                    <div className="col-md-3 col-sm-6 proilecard">
+                                                    <div className="col-md-6 col-sm-6 proilecard">
+                                                     <div className="title-col">Subscribe Notification</div>
                                                         <Subscription/>
                                                     </div>
                                             

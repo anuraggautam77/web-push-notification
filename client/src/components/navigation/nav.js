@@ -25,12 +25,12 @@ class NavMenu extends Component {
                 <ul className="nav navbar-nav">
               <li>
               <NavLink to="/main" activeClassName="active" >
-                <span className="glyphicon glyphicon-home"></span> Home
+                <span className="glyphicon glyphicon-home"></span> 
               </NavLink>
               </li>
               <li className="navbar-right" >
               <NavLink to='' onClick={this.logoutclick} activeClassName="" >
-                <span className="glyphicon glyphicon-log-out"></span> Logout 
+                <span className="glyphicon glyphicon-user"></span> Logout 
               </NavLink>
               </li>
                </ul>
@@ -50,9 +50,6 @@ class NavMenu extends Component {
         
                }
             })()} 
-              
-             
-           
       
           </div>
         </div>
