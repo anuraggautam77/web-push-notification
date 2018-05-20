@@ -16,39 +16,113 @@ class App extends Component {
         } else {
             this.auth.stopInterval();
         }
-        this.initGeolocation();
+
     }
 
-    initGeolocation() {
+    initGeolocation(callback) {
         if (navigator && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(this.successCallback, this.errorCallback, {timeout: 10000});
+            navigator.geolocation.getCurrentPosition((position)=> {
+                if (window.localStorage.getItem('plat-log') === null) {
+                    window.localStorage.setItem('plat-log', position.coords.latitude + "--" + position.coords.longitude);
+                }
+                callback();
+            }, function(error){
+                console.log("err>",error)
+            }, {timeout: 10000});
+          
+          navigator.geolocation.watchPosition((position)=> {
+              console.log(window.localStorage.getItem('plat-log'));
+              console.log(position.coords.latitude + "--" + position.coords.longitude)
+                   if(window.localStorage.getItem('plat-log')!==position.coords.latitude + "--" + position.coords.longitude){
+                       console.log(">>>Change in address")
+                       window.localStorage.setItem('plat-log', position.coords.latitude + "--" + position.coords.longitude);  
+                         callback();
+                   }
+              
+            }, function(error){
+                  console.log("err>",error)
+            });  
+          
+          
         } else {
             console.log('Geolocation is not supported');
         }
     }
 
-    successCallback(position) {
-        var ll = [position.coords.latitude, position.coords.longitude].join(',');
-        var mapUrl = "http://maps.google.com/maps/api/staticmap?center=";
-        mapUrl = mapUrl + position.coords.latitude + ',' + position.coords.longitude + "&markers=" + ll;
-        mapUrl = mapUrl + '&zoom=15&size=512x512&maptype=roadmap&sensor=false';
-       
-        window.localStorage.setItem('lat-log', position.coords.latitude + "--" + position.coords.longitude);
-        window.localStorage.setItem('mapImg', mapUrl);
+    
+    componentDidMount() {
+        this.initGeolocation( ()=> {
+            this.getcode();
+        });
+        
+     
+        
+    }
 
+    getcode() {
+        var lat, lng = '';
+        if (window.localStorage.getItem('plat-log') !== null) {
+            lat = window.localStorage.getItem('plat-log').split('--')[0];
+            lng = window.localStorage.getItem('plat-log').split('--')[1];
+            var geocoder = new google.maps.Geocoder;
+            var latlng = {lat: parseFloat(lat), lng: parseFloat(lng)};
+            geocoder.geocode({'location': latlng}, (results, status) => {
+                if (status === 'OK') {
+                    this.getZipcode(results);
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            }
+            )
+        }
+    }
+
+    getZipcode(place) {
+
+        var zipcodes = [];
+        if (Array.isArray(place)) {
+            for (var k = 0; k < place.length; k++) {
+                for (var i = 0; i < place[k].address_components.length; i++) {
+                    for (var j = 0; j < place[k].address_components[i].types.length; j++) {
+                        if (place[k].address_components[i].types[j] == "postal_code") {
+                            // console.log(place[k].address_components[i].long_name);
+                            zipcodes.push(place[k].address_components[i].long_name)
+                        }
+                    }
+                }
+            }
+        } else {
+            for (var i = 0; i < place.address_components.length; i++) {
+                for (var j = 0; j < place.address_components[i].types.length; j++) {
+                    if (place.address_components[i].types[j] == "postal_code") {
+                        // console.log(place.address_components[i].long_name);
+                        zipcodes.push(place.address_components[i].long_name);
+                    }
+                }
+            }
+
+        }
+        console.log(zipcodes);
+        if (zipcodes.length > 0) {
+            window.localStorage.setItem('pzipcodes', zipcodes);
+            //Store in IndexDB
+
+            store.storeinIdb();
+        }
     }
 
     saveCurrentLocation() {
-
-        if (window.localStorage.getItem('deviceToken') !== null && window.localStorage.getItem('lat-log') !== null) {
+        if (window.localStorage.getItem('deviceToken') !== null && window.localStorage.getItem('plat-log') !== null) {
             fetch('/api/whereiam', {method: 'post', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    latlng: window.localStorage.getItem('lat-log'),
-                    imgUrl: window.localStorage.getItem('mapImg'),
+                    platlng: window.localStorage.getItem('plat-log'),
+                    pzipcodes: window.localStorage.getItem('pzipcodes'),
                     userId: window.localStorage.getItem('userid'),
                     token: window.localStorage.getItem('deviceToken')
                 })
-            }).then(res => res.json()).then(json => {  console.log(json);  })
+            }).then(res => res.json()).then(json => {
+                console.log(json);
+            })
         }
     }
 
@@ -85,7 +159,7 @@ class App extends Component {
     render() {
         return (
                 <div>
-                     <Routing islogin={this.state.isLoggedIn} />
+                    <Routing islogin={this.state.isLoggedIn} />
                 </div>);
     }
 }

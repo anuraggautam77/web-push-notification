@@ -90,8 +90,10 @@ module.exports = {
       disable: !isProd
     }),
 
-    new CopyWebpackPlugin ([{
-        from: helpers.root ('client/public')
-      }])
+    new CopyWebpackPlugin (
+            [{
+                    from: helpers.root ('client/public')
+             }]
+          )
   ]
 };

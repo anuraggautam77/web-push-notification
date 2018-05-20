@@ -45,9 +45,13 @@ const SERVICE_CONST = {
     GET_SUB_NOTIFICATION: 'subnotification',
     POST_NOTIFICATION: 'postnotification',
 
+    GET_PROMO_IMAGES: 'getpromoimages',
+
     POST_GEO: 'geopostnotification',
     WHERE_I_AM: 'whereiam',
-    GET_PROMO_IMAGES: 'getpromoimages'
+    SET_NEW_LOCATION: 'setnewlocation',
+    GET_STORES: 'getstores'
+
 };
 let cryptr = new Cryptr(USER_ID_ENCRYPT_DECTYPT);
 module.exports = (apiRoutes) => {
@@ -83,12 +87,10 @@ module.exports = (apiRoutes) => {
     }
 
 
-
-
     apiRoutes.get(`/${SERVICE_CONST.GET_PROMO_IMAGES}`, function (req, res) {
         var arrofImages = [];
         fs.readdirSync(promoimgages).forEach((file, k) => {
-           arrofImages.push(file);
+            arrofImages.push(file);
         });
         res.status(200).json({status: 200, images: arrofImages});
     });
@@ -104,7 +106,6 @@ module.exports = (apiRoutes) => {
             var token = generateNewToken(cryptr.decrypt(req.headers['id']));
             res.status(objCheck.status).json({status: "success", message: 'New token !!', accesstoken: token, userid: req.headers['id']});
         } else {
-
             res.status(objCheck.status).json({status: objCheck.status, message: objCheck.message});
         }
     });
@@ -155,7 +156,80 @@ module.exports = (apiRoutes) => {
     });
 
 
+    apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
+
+        var latlng = req.body.latlng;
+        var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
+
+        request(api, function (error, response, body) {
+          
+            //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+            console.log('body:', body.results);
+            var detailData = [], body = JSON.parse(body);
+            body.results.forEach((obj, k) => {
+                let count = (k + 1);
+                if (k === 0) {
+                    detailData.push(count + ")." + obj.name);
+                } else {
+                    detailData.push("\n" + count + ")." + obj.name);
+                }
+
+            });
+
+
+               res.json({status: "200", stores:detailData, message: "Subscribe Successfully!! !!!!"});
+        });
+
+
+    });
+
+
+
+
+
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
+
+        var latlng = req.body.platlng;
+        var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
+
+        Geo.find({
+            'userid': cryptr.decrypt(req.body.userId)
+        }, (error, data) => {
+
+            if (data.length > 0) {
+                var obj = {};
+
+                obj.plat = latlng.split('--')[0];
+                obj.plng = latlng.split('--')[1];
+                obj.pzipcodes = req.body.pzipcodes;
+                Geo.update(
+                        {'userid': cryptr.decrypt(req.body.userId)},
+                        {
+                            $addToSet: {token: req.body.token},
+                            $set: obj
+                        }, (data) => {
+                    res.json({status: "200", message: "Upadte my location Scucessfully!!"});
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId), "p");
+
+                });
+            } else {
+                var obj = {};
+
+
+                obj.plat = latlng.split('--')[0];
+                obj.plng = latlng.split('--')[1];
+                obj.pzipcodes = req.body.pzipcodes;
+                obj.token = req.body.token;
+                obj.userid = cryptr.decrypt(req.body.userId);
+                new Geo(obj).save().then(() => {
+                    res.json({status: "200", message: " Add my location Successfully!! !!!!"});
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId), "p");
+                });
+            }
+        });
+    });
+
+    apiRoutes.post(`/${SERVICE_CONST.SET_NEW_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
         var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
@@ -169,7 +243,7 @@ module.exports = (apiRoutes) => {
                 obj.sub = true;
                 obj.lat = latlng.split('--')[0];
                 obj.lng = latlng.split('--')[1];
-                obj.imgurl = req.body.imgUrl;
+                obj.zipcodes = req.body.zipcodes;
                 Geo.update(
                         {'userid': cryptr.decrypt(req.body.userId)},
                         {
@@ -177,7 +251,7 @@ module.exports = (apiRoutes) => {
                             $set: obj
                         }, (data) => {
                     res.json({status: "200", message: "Upadte my location Scucessfully!!"});
-                    getnearbylocation(api, cryptr.decrypt(req.body.userId));
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId), '');
 
                 });
             } else {
@@ -186,20 +260,19 @@ module.exports = (apiRoutes) => {
                 obj.sub = true;
                 obj.lat = latlng.split('--')[0];
                 obj.lng = latlng.split('--')[1];
-                obj.imgurl = req.body.imgUrl;
+                obj.zipcodes = req.body.zipcodes;
                 obj.token = req.body.token;
                 obj.userid = cryptr.decrypt(req.body.userId);
                 new Geo(obj).save().then(() => {
                     res.json({status: "200", message: " Add my location Successfully!! !!!!"});
-                    getnearbylocation(api, cryptr.decrypt(req.body.userId));
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId), '');
                 });
             }
         });
 
     });
 
-
-    function getnearbylocation(api, id) {
+    function getnearbylocation(api, id, flag) {
         console.log(api)
         request(api, function (error, response, body) {
             console.log('error>>>>>>>:', error); // Print the error if one occurred
@@ -217,7 +290,12 @@ module.exports = (apiRoutes) => {
             });
 
             var obj = {};
-            obj.nearby = detailData;
+            if (flag === '') {
+                obj.nearby = detailData;
+            } else {
+                obj.pnearby = detailData;
+            }
+
             Geo.update({'userid': id}, {$set: obj}, (data) => {
                 console.log(data);
             });
