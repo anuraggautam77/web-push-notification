@@ -42,7 +42,7 @@ self.addEventListener('sync', function (event) {
         console.log(messages[messages.length - 1].latlng);
         return fetch('/api/getstores', {
             method: 'POST',
-            body: JSON.stringify({latlng: messages[messages.length - 1].latlng}),
+            body: JSON.stringify({latlng: messages[messages.length - 1].latlng, zipcodes:messages[messages.length - 1].zipcodes}),
             headers: {
                 'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
@@ -101,5 +101,5 @@ self.addEventListener('push', function (event) {
 self.addEventListener('notificationclick', function (event) {
     console.log('[Service Worker] Notification click Received.');
     event.notification.close();
-    event.waitUntil(clients.openWindow('https://google.com'));
+    event.waitUntil(clients.openWindow('http://donotifyme.herokuapp.com'));
 });

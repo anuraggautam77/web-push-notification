@@ -44,9 +44,7 @@ const SERVICE_CONST = {
     GET_FCM: 'getfcm',
     GET_SUB_NOTIFICATION: 'subnotification',
     POST_NOTIFICATION: 'postnotification',
-
     GET_PROMO_IMAGES: 'getpromoimages',
-
     POST_GEO: 'geopostnotification',
     WHERE_I_AM: 'whereiam',
     SET_NEW_LOCATION: 'setnewlocation',
@@ -135,7 +133,7 @@ module.exports = (apiRoutes) => {
                         {'userid': cryptr.decrypt(req.body.userId)},
                         {
                             $addToSet: {token: req.body.token},
-                            $set: obj,
+                            $set: obj
                         }, (data) => {
                     res.json({status: "200", message: "Subscribe Updtaed Scucessfully!!"});
                 });
@@ -157,29 +155,51 @@ module.exports = (apiRoutes) => {
 
 
     apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
+        var arrayApi = [
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=30312&Radius=15&storeTypes=FlagshipStore%2CMRU%2CConvenienceStore&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=2018-05-18T12%3A56%3A15.637Z',
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=MRU&serviceTypes=&date=2018-05-21T08%3A58%3A13.509Z',
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=FlagshipStore&serviceTypes=&date=2018-05-21T08%3A58%3A19.919Z '
+        ];
 
-        var latlng = req.body.latlng;
-        var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
-
-        request(api, function (error, response, body) {
-          
-            //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-            console.log('body:', body.results);
-            var detailData = [], body = JSON.parse(body);
-            body.results.forEach((obj, k) => {
-                let count = (k + 1);
-                if (k === 0) {
-                    detailData.push(count + ")." + obj.name);
-                } else {
-                    detailData.push("\n" + count + ")." + obj.name);
-                }
-
-            });
-
-
-               res.json({status: "200", stores:detailData, message: "Subscribe Successfully!! !!!!"});
-        });
-
+        var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
+        request.get({
+            url: api,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36',
+                'Content-Type': 'application/json; charset=utf-8',
+                'Cookie': "testcookie=true; path=/; domain=.getiqos.com; Expires=Tue, 19 Jan 2038 03:14:07 GMT;"
+            },
+            method: 'get'
+        },
+                function (e, r, body) {
+                    body = JSON.parse(body);
+                    if (body.hasOwnProperty('services') && body.services !== null) {
+                        if (body.services.hasOwnProperty('StoreList') && body.services.StoreList !== null) {
+                            if (body.services.StoreList.hasOwnProperty('data') && body.services.StoreList.data !== null) {
+                                if (body.services.StoreList.data.hasOwnProperty('responseData') && body.services.StoreList.data.responseData !== null) {
+                                    var detailData = [];
+                                    body.services.StoreList.data.responseData.forEach((obj, k) => {
+                                        let count = (k + 1);
+                                        if (k === 0) {
+                                            detailData.push(count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                        } else {
+                                            detailData.push("\n" + count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                        }
+                                    });
+                                    res.json({status: "200", stores: detailData, message: "Store List Successfully!! !!!!"});
+                                } else {
+                                    console.log("inner");
+                                }
+                            } else {
+                                console.log("inner1");
+                            }
+                        } else {
+                            console.log("inner2");
+                        }
+                    } else {
+                        console.log("inner3");
+                    }
+                });
 
     });
 
@@ -190,7 +210,17 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
+
+        var arrayApi = [
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=30312&Radius=15&storeTypes=FlagshipStore%2CMRU%2CConvenienceStore&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=2018-05-18T12%3A56%3A15.637Z',
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=MRU&serviceTypes=&date=2018-05-21T08%3A58%3A13.509Z',
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=FlagshipStore&serviceTypes=&date=2018-05-21T08%3A58%3A19.919Z '
+        ];
+
+        var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
+
+
+        //  var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
 
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
@@ -232,8 +262,13 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.SET_NEW_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
-        var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
+        var arrayApi = [
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=30312&Radius=15&storeTypes=FlagshipStore%2CMRU%2CConvenienceStore&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=2018-05-18T12%3A56%3A15.637Z',
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=MRU&serviceTypes=&date=2018-05-21T08%3A58%3A13.509Z',
+            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=FlagshipStore&serviceTypes=&date=2018-05-21T08%3A58%3A19.919Z '
+        ];
 
+        var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
         }, (error, data) => {
@@ -274,32 +309,89 @@ module.exports = (apiRoutes) => {
 
     function getnearbylocation(api, id, flag) {
         console.log(api)
-        request(api, function (error, response, body) {
-            console.log('error>>>>>>>:', error); // Print the error if one occurred
-            //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-            console.log('body:', body.results);
-            var detailData = [], body = JSON.parse(body);
-            body.results.forEach((obj, k) => {
-                let count = (k + 1);
-                if (k === 0) {
-                    detailData.push(count + ")." + obj.name);
-                } else {
-                    detailData.push("\n" + count + ")." + obj.name);
-                }
 
-            });
+        request.get({
+            url: api,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36',
+                'Content-Type': 'application/json; charset=utf-8',
+                'Cookie': "testcookie=true; path=/; domain=.getiqos.com; Expires=Tue, 19 Jan 2038 03:14:07 GMT;"
+            },
+            method: 'get'
+        },
+                function (e, r, body) {
 
-            var obj = {};
-            if (flag === '') {
-                obj.nearby = detailData;
-            } else {
-                obj.pnearby = detailData;
-            }
+                    body = JSON.parse(body);
+                    if (body.hasOwnProperty('services') && body.services !== null) {
+                        if (body.services.hasOwnProperty('StoreList') && body.services.StoreList !== null) {
+                            if (body.services.StoreList.hasOwnProperty('data') && body.services.StoreList.data !== null) {
+                                if (body.services.StoreList.data.hasOwnProperty('responseData') && body.services.StoreList.data.responseData !== null) {
+                                    var detailData = [];
+                                    body.services.StoreList.data.responseData.forEach((obj, k) => {
+                                        let count = (k + 1);
+                                        if (k === 0) {
+                                            detailData.push(count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                        } else {
+                                            detailData.push("\n" + count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                        }
+                                    });
 
-            Geo.update({'userid': id}, {$set: obj}, (data) => {
-                console.log(data);
-            });
-        });
+
+                                    var obj = {};
+                                    if (flag === '') {
+                                        obj.nearby = detailData;
+                                    } else {
+                                        obj.pnearby = detailData;
+                                    }
+
+                                    Geo.update({'userid': id}, {$set: obj}, (data) => {
+                                        console.log(data);
+                                    });
+
+                                    // res.json({status: "200", stores: detailData, message: "Store List Successfully!! !!!!"});
+                                } else {
+                                    console.log("inner");
+                                }
+                            } else {
+                                console.log("inner1");
+                            }
+                        } else {
+                            console.log("inner2");
+                        }
+                    } else {
+                        console.log("inner3");
+                    }
+                });
+
+
+
+        /*
+         request(api, function (error, response, body) {
+         console.log('error>>>>>>>:', error); // Print the error if one occurred
+         //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+         console.log('body:', body.results);
+         var detailData = [], body = JSON.parse(body);
+         body.results.forEach((obj, k) => {
+         let count = (k + 1);
+         if (k === 0) {
+         detailData.push(count + ")." + obj.name);
+         } else {
+         detailData.push("\n" + count + ")." + obj.name);
+         }
+         
+         });
+         
+         var obj = {};
+         if (flag === '') {
+         obj.nearby = detailData;
+         } else {
+         obj.pnearby = detailData;
+         }
+         
+         Geo.update({'userid': id}, {$set: obj}, (data) => {
+         console.log(data);
+         });
+         }); */
 
     }
 
