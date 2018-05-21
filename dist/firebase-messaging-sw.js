@@ -1,35 +1,37 @@
 importScripts('/store/idb.js');
 importScripts('/store/store.js');
+importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
+
 
 const version = "0.6.9";
 const cacheName = `push-${version}`;
 self.addEventListener('install', e => {
-  const timeStamp = Date.now();
-  e.waitUntil(
-    caches.open(cacheName).then(cache => {
-      return cache.addAll([
-        `/`,
-        `//index.html?timestamp=${timeStamp}`,
-        `/js/app.js?timestamp=${timeStamp}`,
-        
-      ])
-          .then(() => self.skipWaiting());
+    const timeStamp = Date.now();
+    e.waitUntil(
+            caches.open(cacheName).then(cache => {
+        return cache.addAll([
+            `/`,
+            `/index.html?timestamp=${timeStamp}`,
+            `/js/app.js?timestamp=${timeStamp}`,
+        ])
+                .then(() => self.skipWaiting());
     })
-  );
+            );
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(self.clients.claim());
+    event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.open(cacheName)
-      .then(cache => cache.match(event.request, {ignoreSearch: true}))
-      .then(response => {
-      return response || fetch(event.request);
-    })
-  );
+    event.respondWith(
+            caches.open(cacheName)
+            .then(cache => cache.match(event.request, {ignoreSearch: true}))
+            .then(response => {
+                return response || fetch(event.request);
+            })
+            );
 });
 
 self.addEventListener('sync', function (event) {
@@ -65,26 +67,19 @@ self.addEventListener('sync', function (event) {
             );
 });
 
+var config = {
+    apiKey: "AIzaSyAxUoFv6a4aIOr1UqsS960Vuo2xoQFdki0",
+    authDomain: "mystuff-57cd4.firebaseapp.com",
+    databaseURL: "https://mystuff-57cd4.firebaseio.com",
+    projectId: "mystuff-57cd4",
+    storageBucket: "mystuff-57cd4.appspot.com",
+    messagingSenderId: "58394593767"
+};
 
+firebase.initializeApp(config);
 
-/*
- 
- 
- importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
- importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
- 
- var config = {
- apiKey: "AIzaSyAxUoFv6a4aIOr1UqsS960Vuo2xoQFdki0",
- authDomain: "mystuff-57cd4.firebaseapp.com",
- databaseURL: "https://mystuff-57cd4.firebaseio.com",
- projectId: "mystuff-57cd4",
- storageBucket: "mystuff-57cd4.appspot.com",
- messagingSenderId: "58394593767"
- };
- firebase.initializeApp(config); 
- 
- //const messaging = firebase.messaging();
- */
+//const messaging = firebase.messaging();
+
 
 self.addEventListener('push', function (event) {
     console.log('Push Notification Received.');
