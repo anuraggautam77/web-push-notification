@@ -1,34 +1,35 @@
 importScripts('/store/idb.js');
 importScripts('/store/store.js');
 
-var CACHE_NAME = 'my-site-cache1-v1';
-var urlsToCache = [
-    '/index.html',
-    '/js/app.js'
-];
-
-self.addEventListener('install', function (event) {
-    // Perform install steps
-    event.waitUntil(caches.open(CACHE_NAME)
-            .then(function (cache) {
-                console.log('Opened cache');
-                return cache.addAll(urlsToCache);
-            })
-            );
+const version = "0.6.9";
+const cacheName = `push-${version}`;
+self.addEventListener('install', e => {
+  const timeStamp = Date.now();
+  e.waitUntil(
+    caches.open(cacheName).then(cache => {
+      return cache.addAll([
+        `/`,
+        `//index.html?timestamp=${timeStamp}`,
+        `/js/app.js?timestamp=${timeStamp}`,
+        
+      ])
+          .then(() => self.skipWaiting());
+    })
+  );
 });
 
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim());
+});
 
-self.addEventListener('fetch', function (event) {
-    event.respondWith(
-            caches.match(event.request)
-            .then(function (response) {
-                // Cache hit - return response
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request);
-            })
-            );
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.open(cacheName)
+      .then(cache => cache.match(event.request, {ignoreSearch: true}))
+      .then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
 
 self.addEventListener('sync', function (event) {

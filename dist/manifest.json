@@ -3,7 +3,6 @@
     "short_name": "Notification",
     "gcm_sender_id": "103953800507",
     "icons": [
-
         {
             "src": "img/icons/android-icon-48x48.png",
             "sizes": "48x48",
