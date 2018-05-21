@@ -157,7 +157,7 @@ class MainPage extends Component {
                     window.localStorage.setItem('lat-log', this.state.lat + '--' + this.state.lng)
                     this.setState({isnotify: 'alert alert-success bd', "alertmessage": 'Update new location Scucessfully!!'});
                     //Store in IndexDB
-                    //store.storeinIdb();
+                     store.storeinIdb();
 
                 }
             })
