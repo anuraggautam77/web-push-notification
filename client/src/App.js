@@ -27,14 +27,13 @@ class App extends Component {
                 }
                 callback();
             }, function(error){
-                console.log("err>",error)
+                console.log("err>",error);Da
             }, {timeout: 10000});
           
           navigator.geolocation.watchPosition((position)=> {
-              console.log(window.localStorage.getItem('plat-log'));
-              console.log(position.coords.latitude + "--" + position.coords.longitude)
+                   console.log(position.coords.latitude + "--" + position.coords.longitude)
                    if(window.localStorage.getItem('plat-log')!==position.coords.latitude + "--" + position.coords.longitude){
-                       console.log(">>>Change in address")
+                       console.log(">>>Change in address");
                        window.localStorage.setItem('plat-log', position.coords.latitude + "--" + position.coords.longitude);  
                          callback();
                    }
@@ -54,8 +53,6 @@ class App extends Component {
         this.initGeolocation( ()=> {
             this.getcode();
         });
-        
-     
         
     }
 
