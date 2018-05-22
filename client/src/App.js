@@ -30,7 +30,6 @@ class App extends Component {
     }
 
     checkDistanceBetweenlocation(oldloc, newloc) {
-
         let lat1 = oldloc.split("--")[0];
         let lat2 = newloc.latitude;
 
@@ -65,7 +64,7 @@ class App extends Component {
 
             navigator.geolocation.getCurrentPosition((position) => {
 
-                store.setDBData(function () {
+                store.setDBData(()=> {
 
                     if (window.localStorage.getItem('clat-log') === null) {
                         window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
@@ -91,7 +90,7 @@ class App extends Component {
 
 
             navigator.geolocation.watchPosition((position) => {
-                store.setDBData(function () {
+                store.setDBData( ()=> {
                     if (window.localStorage.getItem('clat-log') === null) {
                         window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
                         callback();
