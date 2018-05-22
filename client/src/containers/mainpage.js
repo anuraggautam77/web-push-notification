@@ -106,8 +106,12 @@ class MainPage extends Component {
             }
 
         }
-        console.log(zipcodes);
-        return zipcodes;
+
+        if (zipcodes.length > 0) {
+            return zipcodes[0];
+        } else {
+            return '';
+        }
     }
 
     drawMap(lt, lg) {
@@ -139,7 +143,8 @@ class MainPage extends Component {
                     platlng: this.state.lat + '--' + this.state.lng,
                     pzipcodes: this.state.zipcodes,
                     userId: window.localStorage.getItem('userid'),
-                    token: window.localStorage.getItem('deviceToken')
+                    token: window.localStorage.getItem('deviceToken'),
+                    time: new Date().toISOString()
                 })
             }).then(res => res.json()).then(json => {
                 window.localStorage.setItem('pzipcodes', this.state.zipcodes);
@@ -159,7 +164,8 @@ class MainPage extends Component {
                     latlng: this.state.lat + '--' + this.state.lng,
                     zipcodes: this.state.zipcodes,
                     userId: window.localStorage.getItem('userid'),
-                    token: window.localStorage.getItem('deviceToken')
+                    token: window.localStorage.getItem('deviceToken'),
+                    time: new Date().toISOString()
                 })
             }).then(res => res.json()).then(json => {
                 console.log(json);
@@ -185,53 +191,53 @@ class MainPage extends Component {
                     </div>
                 
                     {
-                    (() => {
+                        (() => {
                             if (this.state.currentuser) {
                                     return (
-                                                    <div className="landing-page">
-                                                
-                                                        <div className="col-md-6 col-sm-6">
-                                                            <div className="title-col">IQOS - Want to get notified about nearby Mobile Stores?</div>
-                                                            <div className="panel panel-default">
-                                                                <div className="panel-heading">
-                                                                    <h5><b>Please share your location. Application will auto notify, when we have Mobile store nearby</b> </h5>
-                                                                </div>
-                                                                <div className="panel-heading">
-                                                                    <br/>
-                                                                    <input ref='cityname' id="id_address"    className="form-control input-first places-autocomplete" type="text"   placeholder="City Name,Country Name" /> 
-                                                
-                                                                    <br/>
-                                                                    <button  className='btn btn-primary crntlo' ref="crntloc" onClick={
-                                                        this.handleCurrentLocation} type='button'>Set Location
-                                                
-                                                                        &nbsp; <span className="glyphicon glyphicon-map-marker"> </span></button>
-                                                                    &nbsp;  &nbsp;
-                                                                    <button  className='btn btn-primary crntlo' ref="crntloc" onClick={
-                                                        this.handleDyanamicLocation} type='button' title='Get notified as you move.'>
-                                                                        Dynamic Alerts &nbsp; <span className="glyphicon glyphicon-map-marker"> </span></button>
-                                                
-                                                
-                                                
-                                                                    <br/> 
-                                                                    <br/>
-                                                                    <div id="googleMap" className="mapsize"></div>                       
-                                                                    <br/>                  
-                                                                </div>
+                                                <div className="landing-page">
+                                            
+                                                    <div className="col-md-6 col-sm-6">
+                                                        <div className="title-col">IQOS - Want to get notified about nearby Mobile Stores?</div>
+                                                        <div className="panel panel-default">
+                                                            <div className="panel-heading">
+                                                                <h5><b>Please share your location. Application will auto notify, when we have Mobile store nearby</b> </h5>
                                                             </div>
-                                                
+                                                            <div className="panel-heading">
+                                                                <br/>
+                                                                <input ref='cityname' id="id_address"    className="form-control input-first places-autocomplete" type="text"   placeholder="City Name,Country Name" /> 
+                                            
+                                                                <br/>
+                                                                <button  className='btn btn-primary crntlo' ref="crntloc" onClick={
+                                                    this.handleCurrentLocation} type='button'>Set Location
+                                            
+                                                                    &nbsp; <span className="glyphicon glyphicon-map-marker"> </span></button>
+                                                                &nbsp;  &nbsp;
+                                                                <button  className='btn btn-primary crntlo' ref="crntloc" onClick={
+                                                    this.handleDyanamicLocation} type='button' title='Get notified as you move.'>
+                                                                    Dynamic Alerts &nbsp; <span className="glyphicon glyphicon-map-marker"> </span></button>
+                                            
+                                            
+                                            
+                                                                <br/> 
+                                                                <br/>
+                                                                <div id="googleMap" className="mapsize"></div>                       
+                                                                <br/>                  
+                                                            </div>
                                                         </div>
-                                                        <div className="col-md-6 col-sm-6 proilecard">
-                                                            <div className="title-col">Subscribe Notification</div>
-                                                            <Subscription/>
-                                                        </div>
+                                            
                                                     </div>
-                                        );
+                                                    <div className="col-md-6 col-sm-6 proilecard">
+                                                        <div className="title-col">Subscribe Notification</div>
+                                                        <Subscription/>
+                                                    </div>
+                                                </div>
+                                            );
                     }else{
-                                        return (
-                                                            <div className="col-md-12 col-sm-12">
-                                                                <div style={{'height': '400px'}}></div>                
-                                                            </div>
-                                                            );
+                                            return (
+                                                        <div className="col-md-12 col-sm-12">
+                                                            <div style={{'height': '400px'}}></div>                
+                                                        </div>
+                                                                );
                     }
                 
                     })()

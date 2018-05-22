@@ -152,9 +152,11 @@ class App extends Component {
         }
 
         if (zipcodes.length > 0) {
-            window.localStorage.setItem('czipcodes', zipcodes);
+            window.localStorage.setItem('czipcodes', zipcodes[0]);
             //Store in IndexDB
             store.storeinIdb('moving');
+        }else{
+             window.localStorage.setItem('czipcodes', ''); 
         }
     }
 
@@ -165,7 +167,8 @@ class App extends Component {
                     platlng: window.localStorage.getItem('plat-log'),
                     pzipcodes: window.localStorage.getItem('pzipcodes'),
                     userId: window.localStorage.getItem('userid'),
-                    token: window.localStorage.getItem('deviceToken')
+                    token: window.localStorage.getItem('deviceToken'),
+                     time: new Date().toISOString()
                 })
             }).then(res => res.json()).then(json => {
                 console.log(json);

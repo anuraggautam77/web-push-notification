@@ -4,7 +4,7 @@ importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
 
 
-const version = "0.7.8";
+const version = "0.11.1";
 const cacheName = `push-${version}`;
 self.addEventListener('install', e => {
     const timeStamp = Date.now();
@@ -29,7 +29,7 @@ self.addEventListener('fetch', event => {
             caches.open(cacheName)
             .then(cache => cache.match(event.request, {ignoreSearch: true}))
             .then(response => {
-                return response || fetch(event.request);
+                //  return response || fetch(event.request);
             })
             );
 });
@@ -50,10 +50,11 @@ self.addEventListener('sync', function (event) {
         } else {
             data.latlng = updatedLastData.platlng;
             data.zipcodes = updatedLastData.pzipcodes;
+
             title = "Dyanamic store Details!";
         }
 
-        console.log(data)
+        data.time = new Date().toISOString();
 
         return fetch('/api/getstores', {
             method: 'POST',
@@ -66,13 +67,15 @@ self.addEventListener('sync', function (event) {
         }).then(function (response) {
             return response.json();
         }).then(function (data) {
-            console.log(data);
-            const options = {
-                icon: "https://donotifyme.herokuapp.com/img/icons/Icon-57.png"
-            };
-            options.body = data.stores.slice(0, 6).join();
-            const title = "Nearby store alert";
-            event.waitUntil(self.registration.showNotification(title, options));
+
+            if (data.length > 0) {
+                const options = {
+                    icon: "https://donotifyme.herokuapp.com/img/icons/Icon-57.png"
+                };
+                options.body = data.stores.slice(0, 6).join();
+                const title = "Nearby store alert";
+                event.waitUntil(self.registration.showNotification(title, options));
+            }
 
         });
 
@@ -97,7 +100,7 @@ firebase.initializeApp(config);
 
 
 self.addEventListener('push', function (event) {
-    console.log('Push Notification Received.');
+    console.log('Notification Received.');
     var eventData = event.data.text();
     var obj = JSON.parse(eventData); //Parse the received JSON object.
     const options = {
@@ -115,5 +118,5 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
     event.notification.close();
-    event.waitUntil(clients.openWindow('http://donotifyme.herokuapp.com'));
+    event.waitUntil(clients.openWindow('https://donotifyme.herokuapp.com'));
 });

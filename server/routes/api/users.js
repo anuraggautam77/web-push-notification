@@ -156,13 +156,12 @@ module.exports = (apiRoutes) => {
 
 
     apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
-        var arrayApi = [
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=30312&Radius=15&storeTypes=FlagshipStore%2CMRU%2CConvenienceStore&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=2018-05-18T12%3A56%3A15.637Z',
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=MRU&serviceTypes=&date=2018-05-21T08%3A58%3A13.509Z',
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=FlagshipStore&serviceTypes=&date=2018-05-21T08%3A58%3A19.919Z '
-        ];
 
-        var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+
+
+        //   var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
         request.get({
             url: api,
             headers: {
@@ -189,16 +188,16 @@ module.exports = (apiRoutes) => {
                                     });
                                     res.json({status: "200", stores: detailData, message: "Store List Successfully!! !!!!"});
                                 } else {
-                                    console.log("inner");
+                                     res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
                                 }
                             } else {
-                                console.log("inner1");
+                                 res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
                             }
                         } else {
-                            console.log("inner2");
+                             res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
                         }
                     } else {
-                        console.log("inner3");
+                        res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
                     }
                 });
 
@@ -211,17 +210,8 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
 
         var latlng = req.body.platlng;
-
-        var arrayApi = [
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=30312&Radius=15&storeTypes=FlagshipStore%2CMRU%2CConvenienceStore&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=2018-05-18T12%3A56%3A15.637Z',
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=MRU&serviceTypes=&date=2018-05-21T08%3A58%3A13.509Z',
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=FlagshipStore&serviceTypes=&date=2018-05-21T08%3A58%3A19.919Z '
-        ];
-
-        var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
-
-
-        //  var api = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng.split('--')[0]},${latlng.split('--')[1]}&radius=100&sensor=false&key=AIzaSyCCptde2n8EgneUR0TF1eo5w4El6hxLO7I&type=store`;
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
@@ -263,13 +253,9 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.SET_NEW_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
-        var arrayApi = [
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=30312&Radius=15&storeTypes=FlagshipStore%2CMRU%2CConvenienceStore&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=2018-05-18T12%3A56%3A15.637Z',
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=MRU&serviceTypes=&date=2018-05-21T08%3A58%3A13.509Z',
-            'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=20120&Radius=15&storeTypes=FlagshipStore&serviceTypes=&date=2018-05-21T08%3A58%3A19.919Z '
-        ];
-
-        var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+ 
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
         }, (error, data) => {
@@ -487,7 +473,7 @@ module.exports = (apiRoutes) => {
                         zipcodes: users[0]['zipcodes']
                     }});
             } else {
-                res.json({status: "success", list:[], message: "No record found!!!!"});
+                res.json({status: "success", list: [], message: "No record found!!!!"});
             }
         });
     });
