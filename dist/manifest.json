@@ -1,0 +1,26 @@
+{
+    "name": "Push Notification Demo",
+    "short_name": "Notification",
+    "gcm_sender_id": "103953800507",
+    "icons": [
+        {
+            "src": "img/icons/android/Icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "img/icons/ios/Icon-512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        } 
+    ],
+    "start_url": "/?homescreen=1",
+    "scope": ".",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "description": "PushNotification",
+    "dir": "ltr",
+    "lang": "en-US"
+}
