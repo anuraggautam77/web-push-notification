@@ -102,7 +102,7 @@ module.exports = class UserController {
                                     "notification": {
                                         "title": message.title,
                                         "body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
-                                        "icon": "https://donotifyme.herokuapp.com/img/icons/ms-icon-70x70.png",
+                                        "icon": "https://donotifyme.herokuapp.com/img/icons/Icon-57.png",
                                         "click_action": "https://donotifyme.herokuapp.com",
                                         "image": 'https://donotifyme.herokuapp.com/img/promoimages/'+message.selectedimg,
                                         "showbanner":message.pbanner
@@ -163,7 +163,7 @@ module.exports = class UserController {
                                         "title": "Nearby Store",
                                         //"body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
                                         "body": "Hi " + _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName) +' \n '+ obj.nearby.slice(0, 6).join(),
-                                        "icon": "https://donotifyme.herokuapp.com/img/bg/loc.png",
+                                        "icon": "https://donotifyme.herokuapp.com/img/icons/Icon-57.png",
                                         "click_action": "https://donotifyme.herokuapp.com",
                                          "image": 'https://donotifyme.herokuapp.com/img/promoimages/'+message.selectedimg,
                                         "showbanner":message.lbanner

@@ -4,7 +4,9 @@
         margin:0 auto;
     }
 }
-
+.panel-heading {
+    padding: 5px 10px;
+}
 .navbar {
     border-radius: 0px;
     border:0px;
@@ -118,4 +120,21 @@
    text-align: center;
    color:#c4c4c4;
    border-top:8px solid #242424;;
+}
+
+    .mapsize{
+        width:600px;
+        height: 300px;
+    }
+
+@media (min-width: 200px) and (max-width: 767px) {
+  
+    .mapsize{
+        width:255px;
+        height:250px;
+    }
+    .crntlo{
+        width:100%
+    }
+  
 }

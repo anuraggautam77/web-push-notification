@@ -43,6 +43,7 @@ const SERVICE_CONST = {
     USER_FCM: 'savefcm',
     GET_FCM: 'getfcm',
     GET_SUB_NOTIFICATION: 'subnotification',
+    GET_lOC_DETAIL: 'getsetlocation',
     POST_NOTIFICATION: 'postnotification',
     GET_PROMO_IMAGES: 'getpromoimages',
     POST_GEO: 'geopostnotification',
@@ -181,9 +182,9 @@ module.exports = (apiRoutes) => {
                                     body.services.StoreList.data.responseData.forEach((obj, k) => {
                                         let count = (k + 1);
                                         if (k === 0) {
-                                            detailData.push(count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                            detailData.push(count + ")." + obj.storeName.replace('�', ' ®') + " (" + obj.addressLine1 + ")");
                                         } else {
-                                            detailData.push("\n" + count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                            detailData.push("\n" + count + ")." + obj.storeName.replace('�', ' ®') + " (" + obj.addressLine1 + ")");
                                         }
                                     });
                                     res.json({status: "200", stores: detailData, message: "Store List Successfully!! !!!!"});
@@ -330,9 +331,9 @@ module.exports = (apiRoutes) => {
                                     body.services.StoreList.data.responseData.forEach((obj, k) => {
                                         let count = (k + 1);
                                         if (k === 0) {
-                                            detailData.push(count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                            detailData.push(count + ")." + obj.storeName.replace('�', ' ®') + " (" + obj.addressLine1 + ")");
                                         } else {
-                                            detailData.push("\n" + count + ")." + obj.storeName.replace('�', ' ®') +" ("+obj.addressLine1+")");
+                                            detailData.push("\n" + count + ")." + obj.storeName.replace('�', ' ®') + " (" + obj.addressLine1 + ")");
                                         }
                                     });
 
@@ -469,6 +470,30 @@ module.exports = (apiRoutes) => {
             }
         });
     });
+
+
+    apiRoutes.get(`/${SERVICE_CONST.GET_lOC_DETAIL}/:id`, (req, res) => {
+
+        let decryptedString = cryptr.decrypt(req.params.id);
+        Geo.find({'userid': decryptedString}, (error, users) => {
+            if (users.length > 0) {
+                res.json({status: "success",
+                    list: {
+                        lat: users[0]['lat'],
+                        lng: users[0]['lng'],
+                        plat: users[0]['plat'],
+                        plng: users[0]['plng'],
+                        pzipcodes: users[0]['pzipcodes'],
+                        zipcodes: users[0]['zipcodes']
+                    }});
+            } else {
+                res.json({status: "success", list:[], message: "No record found!!!!"});
+            }
+        });
+    });
+
+
+
     apiRoutes.get(`/${SERVICE_CONST.GET_SUB_NOTIFICATION}/:id`, (req, res) => {
 
         let decryptedString = cryptr.decrypt(req.params.id);

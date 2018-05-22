@@ -4,7 +4,7 @@ importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
 
 
-const version = "0.6.9";
+const version = "0.7.8";
 const cacheName = `push-${version}`;
 self.addEventListener('install', e => {
     const timeStamp = Date.now();
@@ -37,12 +37,27 @@ self.addEventListener('fetch', event => {
 self.addEventListener('sync', function (event) {
 
     event.waitUntil(store.setup('readonly').then(function (currentgeo) {
+        console.log(currentgeo);
         return currentgeo.getAll();
     }).then(function (messages) {
-        console.log(messages[messages.length - 1].latlng);
+        var updatedLastData = messages[messages.length - 1];
+        var data = {latlng: null, zipcodes: null};
+        var title = '';
+        if (updatedLastData.type === "moving") {
+            data.latlng = updatedLastData.clatlng;
+            data.zipcodes = updatedLastData.czipcodes;
+            title = "Near by Store Details!";
+        } else {
+            data.latlng = updatedLastData.platlng;
+            data.zipcodes = updatedLastData.pzipcodes;
+            title = "Dyanamic store Details!";
+        }
+
+        console.log(data)
+
         return fetch('/api/getstores', {
             method: 'POST',
-            body: JSON.stringify({latlng: messages[messages.length - 1].latlng, zipcodes:messages[messages.length - 1].zipcodes}),
+            body: JSON.stringify(data),
             headers: {
                 'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
@@ -53,7 +68,7 @@ self.addEventListener('sync', function (event) {
         }).then(function (data) {
             console.log(data);
             const options = {
-                icon: "/img/bg/loc.png"
+                icon: "https://donotifyme.herokuapp.com/img/icons/Icon-57.png"
             };
             options.body = data.stores.slice(0, 6).join();
             const title = "Nearby store alert";
@@ -99,7 +114,6 @@ self.addEventListener('push', function (event) {
 });
 
 self.addEventListener('notificationclick', function (event) {
-    console.log('[Service Worker] Notification click Received.');
     event.notification.close();
     event.waitUntil(clients.openWindow('http://donotifyme.herokuapp.com'));
 });
