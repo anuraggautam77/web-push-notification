@@ -11,9 +11,9 @@ self.addEventListener('install', e => {
     e.waitUntil(
             caches.open(cacheName).then(cache => {
         return cache.addAll([
-            `/`,
-            `/index.html?timestamp=${timeStamp}`,
-            `/js/app.js?timestamp=${timeStamp}`,
+                    `/`,
+                    //  `/index.html?timestamp=${timeStamp}`,
+                    //`/js/app.js?timestamp=${timeStamp}`,
         ])
                 .then(() => self.skipWaiting());
     })
@@ -40,45 +40,48 @@ self.addEventListener('sync', function (event) {
         console.log(currentgeo);
         return currentgeo.getAll();
     }).then(function (messages) {
-        var updatedLastData = messages[messages.length - 1];
-        var data = {latlng: null, zipcodes: null};
-        var title = '';
-        if (updatedLastData.type === "moving") {
-            data.latlng = updatedLastData.clatlng;
-            data.zipcodes = updatedLastData.czipcodes;
-            title = "Near by Store Details!";
-        } else {
-            data.latlng = updatedLastData.platlng;
-            data.zipcodes = updatedLastData.pzipcodes;
 
-            title = "Dyanamic store Details!";
+        if (messages.length > 0) {
+
+            var updatedLastData = messages[messages.length - 1];
+            var data = {latlng: null, zipcodes: null};
+            var title = '';
+            if (updatedLastData.type === "moving") {
+                data.latlng = updatedLastData.clatlng;
+                data.zipcodes = updatedLastData.czipcodes;
+                title = "Near by Store Details!";
+            } else {
+                data.latlng = updatedLastData.platlng;
+                data.zipcodes = updatedLastData.pzipcodes;
+
+                title = "Dyanamic store Details!";
+            }
+
+            data.time = new Date().toISOString();
+
+            return fetch('/api/getstores', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+
+                if (data.length > 0) {
+                    const options = {
+                        icon: "https://donotifyme.herokuapp.com/img/icons/Icon-57.png"
+                    };
+                    options.body = data.stores.slice(0, 6).join();
+                    const title = "Nearby store alert";
+                    event.waitUntil(self.registration.showNotification(title, options));
+                }
+
+            });
         }
-    
-        data.time = new Date().toISOString();
-
-        return fetch('/api/getstores', {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/json'
-            }
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-
-            if (data.length > 0) {
-                const options = {
-                    icon: "https://donotifyme.herokuapp.com/img/icons/Icon-57.png"
-                };
-                options.body = data.stores.slice(0, 6).join();
-                const title = "Nearby store alert";
-                event.waitUntil(self.registration.showNotification(title, options));
-            }
-
-        });
-
     }).catch(function (err) {
         console.error(err);
     })

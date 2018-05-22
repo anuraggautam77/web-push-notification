@@ -9,7 +9,7 @@ class App extends Component {
         super(props);
         this.state = {
             "isLoggedIn": window.localStorage.getItem('isLoggedIn'),
-            "unit": "N", // 'M' is statute miles (default) , 'K' is kilometers  , 'N' is nautical miles
+            "unit": "K", // 'M' is statute miles (default) , 'K' is kilometers  , 'N' is nautical miles
             "distanceupto": 20
         };
         this.mySubscriber = this.mySubscriber.bind(this);
@@ -24,11 +24,9 @@ class App extends Component {
     }
 
     componentDidMount() {
-
         this.getCurrentLoc(() => {
             this.getcode();
         });
-
     }
 
     checkDistanceBetweenlocation(oldloc, newloc) {
@@ -64,18 +62,27 @@ class App extends Component {
     getCurrentLoc(callback) {
         var distance;
         if (navigator && navigator.geolocation) {
+
             navigator.geolocation.getCurrentPosition((position) => {
-                if (window.localStorage.getItem('clat-log') === null) {
-                    window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
-                    callback();
-                } else {
-                    distance = this.checkDistanceBetweenlocation(window.localStorage.getItem('clat-log'), position.coords);
-                    if (distance > this.state.distanceupto) {
+
+                store.setDBData(function () {
+
+                    if (window.localStorage.getItem('clat-log') === null) {
                         window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
-                        console.log(">>notification trigger");
                         callback();
+                    } else {
+
+                        console.log(window.localStorage.getItem('clat-log'));
+                        distance = this.checkDistanceBetweenlocation(window.localStorage.getItem('clat-log'), position.coords);
+
+                        if (distance > this.state.distanceupto) {
+                            window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
+                            console.log(">>notification trigger");
+                            callback();
+                        }
                     }
-                }
+
+                });
 
             }, function (error) {
                 console.log("err>", error);
@@ -84,20 +91,23 @@ class App extends Component {
 
 
             navigator.geolocation.watchPosition((position) => {
-                if (window.localStorage.getItem('clat-log') === null) {
-                    window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
-                    callback();
-                } else {
-                    distance = this.checkDistanceBetweenlocation(window.localStorage.getItem('clat-log'), position.coords);
-
-                    if (distance > this.state.distanceupto) {
+                store.setDBData(function () {
+                    if (window.localStorage.getItem('clat-log') === null) {
                         window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
-                        console.log(">>notification trigger");
                         callback();
+                    } else {
+                        distance = this.checkDistanceBetweenlocation(window.localStorage.getItem('clat-log'), position.coords);
+
+                        if (distance > this.state.distanceupto) {
+                            window.localStorage.setItem('clat-log', position.coords.latitude + "--" + position.coords.longitude);
+                            console.log(">>notification trigger");
+                            callback();
+                        }
                     }
-                }
+                });
+
             }, function (error) {
-                console.log("err>", error)
+                console.log("err>", error);
             });
 
 
@@ -155,8 +165,8 @@ class App extends Component {
             window.localStorage.setItem('czipcodes', zipcodes[0]);
             //Store in IndexDB
             store.storeinIdb('moving');
-        }else{
-             window.localStorage.setItem('czipcodes', ''); 
+        } else {
+            window.localStorage.setItem('czipcodes', '');
         }
     }
 
@@ -168,7 +178,7 @@ class App extends Component {
                     pzipcodes: window.localStorage.getItem('pzipcodes'),
                     userId: window.localStorage.getItem('userid'),
                     token: window.localStorage.getItem('deviceToken'),
-                     time: new Date().toISOString()
+                    time: new Date().toISOString()
                 })
             }).then(res => res.json()).then(json => {
                 console.log(json);
