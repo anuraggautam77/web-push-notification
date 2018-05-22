@@ -53,7 +53,7 @@ self.addEventListener('sync', function (event) {
 
             title = "Dyanamic store Details!";
         }
-
+    
         data.time = new Date().toISOString();
 
         return fetch('/api/getstores', {
