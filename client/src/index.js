@@ -22,7 +22,6 @@ var config = {
 
 
 if ('serviceWorker' in navigator) {
-
     firebase.initializeApp(config);
     var messaging = firebase.messaging();
     messaging.requestPermission().then(function () {
@@ -31,8 +30,8 @@ if ('serviceWorker' in navigator) {
         console.log(token);
         window.localStorage.setItem('deviceToken', token);
     }).catch(function (err) {
-        alert(err);
-        console.log("No Permission!! ");
+         
+        console.log("No Permission!! ",err);
     });
 
     messaging.onMessage(function (payload) {

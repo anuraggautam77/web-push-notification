@@ -35,7 +35,8 @@ mongoose.Promise = global.Promise;
 app.use(cors());
 app.use (morgan('dev'));
 
-app.use (express.static (path.resolve (__dirname, '../dist')));
+ app.use (express.static (path.resolve (__dirname, '../dist')));
+// app.use (express.static (path.resolve (__dirname, '../client/public')));
 app.use (bodyParser.urlencoded ({extended: true  }));
 app.use( bodyParser.json( { limit: '50MB' } ) );
 

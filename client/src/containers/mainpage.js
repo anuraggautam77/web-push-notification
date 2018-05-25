@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import PubSub from 'pubsub-js';
-import Profilecard from '../components/profile/profilecard';
 import Subscription from '../components/notifications/subscription';
 
 class MainPage extends Component {
@@ -138,6 +137,7 @@ class MainPage extends Component {
 
     handleDyanamicLocation() {
         if (this.state.lat !== '' && this.state.lng !== '') {
+             
             fetch('/api/whereiam', {method: 'post', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     platlng: this.state.lat + '--' + this.state.lng,

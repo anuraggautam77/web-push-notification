@@ -13,7 +13,8 @@ module.exports = {
   entry: {
     'app': [
       helpers.root ('client/src/index.js')
-    ]
+    ],
+    vendor: ['react','react-dom','react-router','react-router-dom']
   },
 
   output: {
@@ -73,6 +74,12 @@ module.exports = {
     new webpack.optimize.ModuleConcatenationPlugin (),
     new webpack.HotModuleReplacementPlugin (),
     new webpack.NoEmitOnErrorsPlugin (),
+    
+     new webpack.optimize.CommonsChunkPlugin({
+        name: 'vendor',
+        minChunks: Infinity,
+        filename: 'js/venderlib.js',
+      }),
 
     new webpack.DefinePlugin ({
       'process.env': {
@@ -86,8 +93,7 @@ module.exports = {
     }),
 
     new ExtractTextPlugin ({
-      filename: 'css/[name].[hash].css',
-      disable: !isProd
+      filename: 'css/application.css'
     }),
 
     new CopyWebpackPlugin (

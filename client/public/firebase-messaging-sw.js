@@ -4,16 +4,14 @@ importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
 
 
-const version = "0.11.1";
+const version = "0.89.1";
 const cacheName = `push-${version}`;
 self.addEventListener('install', e => {
     const timeStamp = Date.now();
     e.waitUntil(
             caches.open(cacheName).then(cache => {
         return cache.addAll([
-                    `/`,
-                    //  `/index.html?timestamp=${timeStamp}`,
-                    //`/js/app.js?timestamp=${timeStamp}`,
+                     
         ])
                 .then(() => self.skipWaiting());
     })
@@ -25,13 +23,7 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-    event.respondWith(
-            caches.open(cacheName)
-            .then(cache => cache.match(event.request, {ignoreSearch: true}))
-            .then(response => {
-                //  return response || fetch(event.request);
-            })
-            );
+ 
 });
 
 self.addEventListener('sync', function (event) {
@@ -71,7 +63,7 @@ self.addEventListener('sync', function (event) {
                 return response.json();
             }).then(function (data) {
 
-                if (data.length > 0) {
+                if (data.stores.length > 0) {
                     const options = {
                         icon: "https://donotifyme.herokuapp.com/img/icons/Icon-57.png"
                     };
@@ -107,7 +99,7 @@ self.addEventListener('push', function (event) {
     var eventData = event.data.text();
     var obj = JSON.parse(eventData); //Parse the received JSON object.
     const options = {
-        icon: obj.notification.icon,
+        icon: "https://donotifyme.herokuapp.com/img/icons/Icon-40.png"
     };
 
     if (obj.data['gcm.notification.showbanner'] === 'true') {

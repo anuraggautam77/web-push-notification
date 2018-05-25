@@ -1,11 +1,15 @@
 const Users = require('../../models/User');
 const UsersDetails = require('../../models/Userdetails');
 const UserController = require('../../userController');
-const Posts = require('../../models/Posts');
-const Comments = require('../../models/Comments');
+ 
 const Geo = require('../../models/geoloc');
 
 const Fcm = require('../../models/fcm');
+
+const Devicefcm = require('../../models/devicefcm');
+
+
+
 const bcrypt = require('bcrypt');
 const Cryptr = require('cryptr');
 const jwt = require('jsonwebtoken');
@@ -31,19 +35,19 @@ const SERVICE_CONST = {
     GET_USER_DETAIL: "getuserdetail",
     USER_UPDATE_DETAIL: "updateuserdetail",
     UPDATE_USER_DATA: 'updateuserdata',
-    IMAGE_UPLOAD: 'uploads',
-    SEND_REQUEST: 'sendrequest',
-    ACCEPT_REQUEST: 'acceptrequest',
-    ACCEPT_FRIEND_LIST: 'acceptfriendlist',
-    SAVE_POST: 'savepost',
-    GET_MY_POSTS: 'getmyposts',
-    DELETE_MY_POST: 'deletemypost',
-    SAVE_COMMENT: 'savecomment',
-    DETAIL_POST: 'getdetailpost',
+  
+  
     USER_FCM: 'savefcm',
     GET_FCM: 'getfcm',
+    
+    USER_DEVICE_FCM: 'savedevicefcm',
+    GET_DEVICE_FCM: 'getdevicefcm',
+    GET_CCN_NOTIFICATION:'getccnnotification',
+    
+    
     GET_SUB_NOTIFICATION: 'subnotification',
-    GET_lOC_DETAIL: 'getsetlocation',
+    
+    GET_LOC_DETAIL: 'getsetlocation',
     POST_NOTIFICATION: 'postnotification',
     GET_PROMO_IMAGES: 'getpromoimages',
     POST_GEO: 'geopostnotification',
@@ -108,7 +112,7 @@ module.exports = (apiRoutes) => {
             res.status(objCheck.status).json({status: objCheck.status, message: objCheck.message});
         }
     });
-    apiRoutes.post(`/${SERVICE_CONST.IMAGE_UPLOAD}`, (req, res, next) => {
+   /* apiRoutes.post(`/${SERVICE_CONST.IMAGE_UPLOAD}`, (req, res, next) => {
         let imageFile = req.files.file;
         imageFile.mv(`${folderpath}\\${req.body.filename}`, function (err) {
             if (err) {
@@ -116,7 +120,92 @@ module.exports = (apiRoutes) => {
             }
             res.json({file: "images/" + req.body.filename});
         });
+    });*/
+    
+    apiRoutes.get(`/${SERVICE_CONST.GET_CCN_NOTIFICATION}/:id`, (req, res) => {
+
+        let decryptedString = req.params.id;
+        Devicefcm.find({'userid': decryptedString}, (error, users) => {
+            if (users.length > 0) {
+                res.json({status: "success", list: {
+                        promotion: users[0]['promotiontype'],
+                        coupontype: users[0]['coupontype']
+                    }});
+            } else {
+                res.json({status: "success", message: "No record found!!!!"});
+            }
+        });
     });
+    
+    
+    
+     apiRoutes.post(`/${SERVICE_CONST.USER_DEVICE_FCM}`, function (req, res) {
+         
+        
+        Devicefcm.find({
+            'userid': req.body.userId
+        }, (error, data) => {
+
+            if (data.length > 0) {
+                var obj = {};
+                if (req.body.subtype === 'P') {
+                    obj.promotiontype = req.body.status;
+                } else {
+                    obj.coupontype = req.body.status;
+                }
+
+                Devicefcm.update(
+                        {'userid': req.body.userId},
+                        {
+                            $addToSet: {token: req.body.token},
+                            $set: obj
+                        }, (data) => {
+                    res.json({status: "200", message: "Subscribe Updtaed Scucessfully!!"});
+                });
+            } else {
+                var obj = {};
+                if (req.body.subtype === 'P') {
+                    obj.promotiontype = req.body.status;
+                } else {
+                    obj.coupontype = req.body.status;
+                }
+                obj.token = req.body.token;
+                obj.userid = req.body.userId;
+                new Devicefcm(obj).save().then(() => {
+                    res.json({status: "200",data:req, message: "Subscribe Successfully!! !!!!"});
+                });
+            }
+        });
+    });
+    
+     apiRoutes.get(`/${SERVICE_CONST.GET_DEVICE_FCM}`, (req, res) => {
+        Devicefcm.find((error, list) => {
+            if (list.length > 0) {
+                res.json({status: "success", list: list});
+            } else {
+                res.json({status: "success", message: "No record found!!!!"});
+            }
+        });
+    });
+    
+    
+    
+    
+    
+    
+    
+     apiRoutes.get(`/${SERVICE_CONST.GET_FCM}`, (req, res) => {
+        Fcm.find((error, list) => {
+            if (list.length > 0) {
+                res.json({status: "success", list: list});
+            } else {
+                res.json({status: "success", message: "No record found!!!!"});
+            }
+        });
+    });
+    
+    
+    
     apiRoutes.post(`/${SERVICE_CONST.USER_FCM}`, function (req, res) {
         Fcm.find({
             'userid': cryptr.decrypt(req.body.userId)
@@ -156,8 +245,7 @@ module.exports = (apiRoutes) => {
 
 
     apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
-
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+             var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
 
@@ -210,7 +298,7 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
         Geo.find({
@@ -229,14 +317,12 @@ module.exports = (apiRoutes) => {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", message: "Upadte my location Scucessfully!!"});
+                    res.json({status: "200", api:api, message: "Upadte my location Scucessfully!!"});
                     getnearbylocation(api, cryptr.decrypt(req.body.userId), "p");
 
                 });
             } else {
                 var obj = {};
-
-
                 obj.plat = latlng.split('--')[0];
                 obj.plng = latlng.split('--')[1];
                 obj.pzipcodes = req.body.pzipcodes;
@@ -442,23 +528,13 @@ module.exports = (apiRoutes) => {
                 res.json({status: "success", message: "No record found!!"});
             }
 
-
         });
 
-
     });
-    apiRoutes.get(`/${SERVICE_CONST.GET_FCM}`, (req, res) => {
-        Fcm.find((error, list) => {
-            if (list.length > 0) {
-                res.json({status: "success", list: list});
-            } else {
-                res.json({status: "success", message: "No record found!!!!"});
-            }
-        });
-    });
+   
 
 
-    apiRoutes.get(`/${SERVICE_CONST.GET_lOC_DETAIL}/:id`, (req, res) => {
+    apiRoutes.get(`/${SERVICE_CONST.GET_LOC_DETAIL}/:id`, (req, res) => {
 
         let decryptedString = cryptr.decrypt(req.params.id);
         Geo.find({'userid': decryptedString}, (error, users) => {
@@ -494,6 +570,9 @@ module.exports = (apiRoutes) => {
             }
         });
     });
+    
+    
+    
     apiRoutes.post(`/${SERVICE_CONST.NEW_USER}`, function (req, res) {
 
         bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
@@ -651,215 +730,6 @@ module.exports = (apiRoutes) => {
                 });
             }
             ;
-        });
-    });
-    apiRoutes.post(`/${SERVICE_CONST.SEND_REQUEST}`, (req, res) => {
-
-        var queryOne = {'_id': cryptr.decrypt(req.body.requestedby)};
-        Users.findOneAndUpdate(queryOne, {
-            $push: {friends: {
-                    status: 'pending',
-                    ftype: 'SR',
-                    userid: mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedto))
-                }}
-        }, function (err, doc) {
-            /** Push to another frind **/
-            var query = {'_id': cryptr.decrypt(req.body.requestedto)};
-            Users.findOneAndUpdate(query, {
-                $push: {friends: {
-                        status: 'pending',
-                        ftype: 'RR',
-                        userid: mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedby))
-                    }}
-            }, function (err, doc) {
-                res.json({status: "pending"});
-            });
-        });
-    });
-    apiRoutes.post(`/${SERVICE_CONST.ACCEPT_REQUEST}`, (req, res) => {
-
-        var queryOne = {
-            "_id": cryptr.decrypt(req.body.requestedby),
-            "friends.userid": mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedto))
-        };
-        Users.findOneAndUpdate(queryOne, {$set: {"friends.$.status": 'ACCEPT'}},
-                function (err, doc) {
-
-                    /** Push to another frind **/
-                    var query = {
-                        "_id": cryptr.decrypt(req.body.requestedto),
-                        "friends.userid": mongoose.Types.ObjectId(cryptr.decrypt(req.body.requestedby))
-                    };
-                    Users.findOneAndUpdate(query, {$set: {"friends.$.status": 'ACCEPT'}},
-                            function (err, doc) {
-                                res.json({status: doc});
-                            });
-                });
-    });
-    apiRoutes.get(`/${SERVICE_CONST.ACCEPT_FRIEND_LIST}/:id`, (req, res) => {
-        var contr = new UserController();
-        if (req.params.id !== 'null') {
-            let decryptedString = mongoose.Types.ObjectId(cryptr.decrypt(req.params.id))
-
-            Users.aggregate([
-                {"$match": {"friends.status": "ACCEPT", '_id': decryptedString}},
-                {"$project": {
-                        "users": {
-                            "$map": {
-                                "input": {
-                                    "$filter": {
-                                        "input": "$friends",
-                                        "as": "el",
-                                        "cond": {"$eq": ["$$el.status", "ACCEPT"]}
-                                    }
-                                },
-                                "as": "item",
-                                "in": "$$item.userid"
-                            }
-                        }
-                    }},
-                {
-                    "$lookup": {
-                        "from": "users",
-                        "localField": "users",
-                        "foreignField": "_id",
-                        "as": "finaldata"
-
-                    }
-                },
-            ]).exec((err, results) => {
-                if (err) {
-                    res.json({status: "error", message: "Something goes wrong!!!!"});
-                }
-                ;
-                if (results.length > 0) {
-                    res.json({status: "success", list: contr.getuserList(results[0].finaldata)});
-                } else {
-                    res.json({status: "success", message: "No record found!!!!"});
-                }
-            });
-        }
-
-    });
-    apiRoutes.post(`/${SERVICE_CONST.SAVE_POST}`, function (req, res, next) {
-
-        req.body._author = cryptr.decrypt(req.body.userid);
-        if (req.body.hasOwnProperty('content')) {
-            req.body.body = req.body.content;
-        }
-        if (req.body.postid !== '') {
-
-            Posts.update({_id: req.body.postid}, req.body, {}, (data) => {
-                let messgae = "Post has been Updated successfully";
-                if (req.body.flag === 'p') {
-                    messgae = "Post has been Published successfully";
-                }
-                res.json({status: "success", message: messgae});
-            });
-        } else {
-            let post = new Posts(req.body);
-            post.save((err, data) => {
-                if (err !== null) {
-                    res.json({status: 'error', message: err});
-                }
-                let messgae = "Post has been Saved successfully";
-                if (req.body.flag === 'p') {
-                    messgae = "Post has been Published successfully";
-                }
-                res.json({status: "success", message: messgae});
-            });
-        }
-
-
-    });
-    apiRoutes.post(`/${SERVICE_CONST.GET_MY_POSTS}`, function (req, res) {
-        let reqdata = req.body, postid = '', obj = {};
-        if (req.body.hasOwnProperty('postid')) {
-            postid = req.body.postid;
-        }
-
-
-        if (reqdata.userid !== '') {
-            obj = {'_author': mongoose.Types.ObjectId(cryptr.decrypt(reqdata.userid))};
-            if (postid !== '') {
-                obj._id = mongoose.Types.ObjectId(postid);
-            }
-        } else {
-            obj.flag = 'p';
-        }
-
-        Posts.aggregate([
-            {"$match": obj},
-            {$sort: {date: -1}},
-            {$lookup: {from: 'users', localField: '_author', foreignField: '_id', as: 'userDetail'}}, // post+ user
-            {$lookup: {from: 'comments', localField: '_id', foreignField: 'postid', as: 'commentdata'}}, // post+ comments
-            // { $lookup: { from: 'commentdata', foreignField: 'commentdata.postby', localField:'users._id', as:'commentuser'}},
-            {$project: {"userDetail": {"registerTime": 0, "friends": 0, "_id": 0, "token": 0, "city": 0, "password": 0, "userid": 0}}}
-
-
-        ]).exec((error, results) => {
-            if (error) {
-                res.json({status: error});
-            }
-
-            var contr = new UserController();
-            contr.getPostDetails(results, req.body.onlytext);
-            res.json({status: "Post Listing", posts: results, obj: obj});
-        });
-    });
-    apiRoutes.post(`/${SERVICE_CONST.DETAIL_POST}`, function (req, res) {
-        let reqdata = req.body, postid = '', obj = {};
-        if (req.body.hasOwnProperty('postid')) {
-            postid = req.body.postid;
-        }
-        if (postid !== '') {
-            obj._id = mongoose.Types.ObjectId(postid);
-        }
-        obj.flag = 'p';
-        Posts.aggregate([
-            {"$match": obj},
-            {$lookup: {from: 'users', localField: '_author', foreignField: '_id', as: 'userDetail'}}, // post+ user
-            {$lookup: {from: 'comments', localField: '_id', foreignField: 'postid', as: 'commentdata'}}, // post+ comments
-            // { $lookup: { from: 'commentdata', foreignField: 'commentdata.postby', localField:'users._id', as:'commentuser'}},
-            {$project: {"userDetail": {"registerTime": 0, "friends": 0, "_id": 0, "token": 0, "city": 0, "password": 0, "userid": 0}}}
-
-
-        ]).exec((error, results) => {
-            if (error) {
-                res.json({status: error});
-            }
-
-            var contr = new UserController();
-            contr.getPostDetails(results, req.body.onlytext);
-            res.json({status: "Post Listing", posts: results, obj: obj});
-        });
-    });
-    apiRoutes.post(`/${SERVICE_CONST.DELETE_MY_POST}`, function (req, res) {
-
-        let userId = cryptr.decrypt(req.body.userid);
-        if (req.body.postid !== '') {
-            Posts.deleteOne({_id: req.body.postid, _author: userId}, (data) => {
-                let messgae = "Post has been Deleted successfully";
-                res.json({status: "success", message: messgae});
-            });
-        }
-
-
-    });
-    apiRoutes.post(`/${SERVICE_CONST.SAVE_COMMENT}`, function (req, res) {
-
-        let  obj = {
-            postby: mongoose.Types.ObjectId(cryptr.decrypt(req.body.postby)),
-            postid: mongoose.Types.ObjectId(req.body.postid),
-            comment: req.body.comment
-        };
-        let comment = new Comments(obj);
-        comment.save((err, data) => {
-            if (err !== null) {
-                res.json({status: 'error', message: err});
-            }
-            let messgae = "Comment has been Saved successfully";
-            res.json({status: "success", message: messgae, commentdata: data});
         });
     });
 };
