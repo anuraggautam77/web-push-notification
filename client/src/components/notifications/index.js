@@ -14,6 +14,7 @@ class DeviceList extends Component {
             bodytext: 'db',
             imageicon: 'dn',
             selectedimg:'',
+            flag:'',
             arrImage:[]
         };
         //  this.refs.senbutton.setAttribute('disable','disable');
@@ -38,13 +39,13 @@ class DeviceList extends Component {
         });
     }
 
-    sendNotification() {
-
+    sendNotification(flag) {
         if (this.state.ptype == '') {
             alert('Please Select Catageory !')
             return false;
         }
         this.setState({'isdisable': true});
+        this.state.flag=flag;
 
         fetch('/api/postnotification', {
             method: 'post',
@@ -174,14 +175,25 @@ class DeviceList extends Component {
                                         </div>    
                                         <br/> 
                 
-                                        <div style={
-                                                                    {'clear': 'both'}}>
+                                        <div style={{'clear': 'both'}}>
                                             <button ref='senbutton' disabled={ this.state.isdisable}
                                                     type="button"  onClick={ (e) => {
-                                                                            this.sendNotification()
+                                                                            this.sendNotification("");
                                   }}
                                                     className="btn btn-primary">Send Notification</button> 
+                                         &nbsp;
+                                            <button ref='senbutton' disabled={ this.state.isdisable}
+                                                    type="button"  onClick={ (e) => {
+                                                                            this.sendNotification("m");
+                                  }}
+                                                    className="btn btn-primary">Trigger Marlboro Notification</button> 
                                         </div>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
                 
                                     </div>
                                 </div>

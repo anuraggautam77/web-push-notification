@@ -1,7 +1,7 @@
 const Users = require('../../models/User');
 const UsersDetails = require('../../models/Userdetails');
 const UserController = require('../../userController');
- 
+
 const Geo = require('../../models/geoloc');
 
 const Fcm = require('../../models/fcm');
@@ -35,20 +35,19 @@ const SERVICE_CONST = {
     GET_USER_DETAIL: "getuserdetail",
     USER_UPDATE_DETAIL: "updateuserdetail",
     UPDATE_USER_DATA: 'updateuserdata',
-  
-  
+
     USER_FCM: 'savefcm',
     GET_FCM: 'getfcm',
-    
+
     USER_DEVICE_FCM: 'savedevicefcm',
     GET_DEVICE_FCM: 'getdevicefcm',
-    GET_CCN_NOTIFICATION:'getccnnotification',
-    
-    
+    GET_CCN_NOTIFICATION: 'getccnnotification',
+
     GET_SUB_NOTIFICATION: 'subnotification',
-    
+
     GET_LOC_DETAIL: 'getsetlocation',
     POST_NOTIFICATION: 'postnotification',
+
     GET_PROMO_IMAGES: 'getpromoimages',
     POST_GEO: 'geopostnotification',
     WHERE_I_AM: 'whereiam',
@@ -112,18 +111,17 @@ module.exports = (apiRoutes) => {
             res.status(objCheck.status).json({status: objCheck.status, message: objCheck.message});
         }
     });
-   /* apiRoutes.post(`/${SERVICE_CONST.IMAGE_UPLOAD}`, (req, res, next) => {
-        let imageFile = req.files.file;
-        imageFile.mv(`${folderpath}\\${req.body.filename}`, function (err) {
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.json({file: "images/" + req.body.filename});
-        });
-    });*/
-    
-    apiRoutes.get(`/${SERVICE_CONST.GET_CCN_NOTIFICATION}/:id`, (req, res) => {
+    /* apiRoutes.post(`/${SERVICE_CONST.IMAGE_UPLOAD}`, (req, res, next) => {
+     let imageFile = req.files.file;
+     imageFile.mv(`${folderpath}\\${req.body.filename}`, function (err) {
+     if (err) {
+     return res.status(500).send(err);
+     }
+     res.json({file: "images/" + req.body.filename});
+     });
+     });*/
 
+    apiRoutes.get(`/${SERVICE_CONST.GET_CCN_NOTIFICATION}/:id`, (req, res) => {
         let decryptedString = req.params.id;
         Devicefcm.find({'userid': decryptedString}, (error, users) => {
             if (users.length > 0) {
@@ -136,12 +134,9 @@ module.exports = (apiRoutes) => {
             }
         });
     });
-    
-    
-    
-     apiRoutes.post(`/${SERVICE_CONST.USER_DEVICE_FCM}`, function (req, res) {
-         
-        
+    apiRoutes.post(`/${SERVICE_CONST.USER_DEVICE_FCM}`, function (req, res) {
+
+
         Devicefcm.find({
             'userid': req.body.userId
         }, (error, data) => {
@@ -172,13 +167,12 @@ module.exports = (apiRoutes) => {
                 obj.token = req.body.token;
                 obj.userid = req.body.userId;
                 new Devicefcm(obj).save().then(() => {
-                    res.json({status: "200",data:req, message: "Subscribe Successfully!! !!!!"});
+                    res.json({status: "200", data: req, message: "Subscribe Successfully!! !!!!"});
                 });
             }
         });
     });
-    
-     apiRoutes.get(`/${SERVICE_CONST.GET_DEVICE_FCM}`, (req, res) => {
+    apiRoutes.get(`/${SERVICE_CONST.GET_DEVICE_FCM}`, (req, res) => {
         Devicefcm.find((error, list) => {
             if (list.length > 0) {
                 res.json({status: "success", list: list});
@@ -187,14 +181,10 @@ module.exports = (apiRoutes) => {
             }
         });
     });
-    
-    
-    
-    
-    
-    
-    
-     apiRoutes.get(`/${SERVICE_CONST.GET_FCM}`, (req, res) => {
+
+
+
+    apiRoutes.get(`/${SERVICE_CONST.GET_FCM}`, (req, res) => {
         Fcm.find((error, list) => {
             if (list.length > 0) {
                 res.json({status: "success", list: list});
@@ -203,9 +193,6 @@ module.exports = (apiRoutes) => {
             }
         });
     });
-    
-    
-    
     apiRoutes.post(`/${SERVICE_CONST.USER_FCM}`, function (req, res) {
         Fcm.find({
             'userid': cryptr.decrypt(req.body.userId)
@@ -242,10 +229,8 @@ module.exports = (apiRoutes) => {
             }
         });
     });
-
-
     apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
-             var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
 
@@ -276,13 +261,13 @@ module.exports = (apiRoutes) => {
                                     });
                                     res.json({status: "200", stores: detailData, message: "Store List Successfully!! !!!!"});
                                 } else {
-                                     res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
+                                    res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
                                 }
                             } else {
-                                 res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
+                                res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
                             }
                         } else {
-                             res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
+                            res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
                         }
                     } else {
                         res.json({status: "200", stores: [], message: "No data found Successfully!! !!!!"});
@@ -290,11 +275,6 @@ module.exports = (apiRoutes) => {
                 });
 
     });
-
-
-
-
-
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
 
         var latlng = req.body.platlng;
@@ -317,7 +297,7 @@ module.exports = (apiRoutes) => {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", api:api, message: "Upadte my location Scucessfully!!"});
+                    res.json({status: "200", api: api, message: "Upadte my location Scucessfully!!"});
                     getnearbylocation(api, cryptr.decrypt(req.body.userId), "p");
 
                 });
@@ -335,13 +315,12 @@ module.exports = (apiRoutes) => {
             }
         });
     });
-
     apiRoutes.post(`/${SERVICE_CONST.SET_NEW_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
         var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
- 
+
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
         }, (error, data) => {
@@ -379,7 +358,6 @@ module.exports = (apiRoutes) => {
         });
 
     });
-
     function getnearbylocation(api, id, flag) {
         console.log(api)
 
@@ -467,10 +445,6 @@ module.exports = (apiRoutes) => {
          }); */
 
     }
-
-
-
-
     apiRoutes.post(`/${SERVICE_CONST.POST_GEO}`, function (req, res) {
         let obj = {};
         obj.sub = 'true';
@@ -498,10 +472,6 @@ module.exports = (apiRoutes) => {
 
 
     });
-
-
-
-
     apiRoutes.post(`/${SERVICE_CONST.POST_NOTIFICATION}`, function (req, res) {
         let obj = {};
         if (req.body.ptype === 'p') {
@@ -510,28 +480,45 @@ module.exports = (apiRoutes) => {
             obj.coupontype = 'sub';
         }
 
-        Fcm.aggregate([
-            {"$match": obj},
-            {$sort: {date: -1}},
-            {$lookup: {from: 'users', localField: 'userid', foreignField: '_id', as: 'userDetail'}} // FCM+ user
-        ]).exec((error, results) => {
-            if (error) {
-                res.json({status: error});
-            }
+        if (req.body.flag === "m") {
 
-            if (results.length > 0) {
-                var contr = new UserController();
-                contr.postToSubscriber(req.body, results, function (data) {
-                    res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
-                });
-            } else {
-                res.json({status: "success", message: "No record found!!"});
-            }
+            Devicefcm.find(obj, (error, results) => {
+                if (results.length > 0) {
+                    var contr = new UserController();
+                    contr.postToSubscriber(req.body, results, function (data) {
+                        res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
+                    });
+                } else {
+                    res.json({status: "success", message: "No record found!!"});
+                }
+            });
 
-        });
+        } else {
+            Fcm.aggregate([
+                {"$match": obj},
+                {$sort: {date: -1}},
+                {$lookup: {from: 'users', localField: 'userid', foreignField: '_id', as: 'userDetail'}} // FCM+ user
+            ]).exec((error, results) => {
+                if (error) {
+                    res.json({status: error});
+                }
+
+                if (results.length > 0) {
+                    var contr = new UserController();
+                    contr.postToSubscriber(req.body, results, function (data) {
+                       res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
+                   });
+                } else {
+                    res.json({status: "success", message: "No record found!!"});
+                }
+
+            });
+        }
+
+
 
     });
-   
+
 
 
     apiRoutes.get(`/${SERVICE_CONST.GET_LOC_DETAIL}/:id`, (req, res) => {
@@ -570,9 +557,9 @@ module.exports = (apiRoutes) => {
             }
         });
     });
-    
-    
-    
+
+
+
     apiRoutes.post(`/${SERVICE_CONST.NEW_USER}`, function (req, res) {
 
         bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
