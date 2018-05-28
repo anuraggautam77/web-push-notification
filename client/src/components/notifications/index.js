@@ -58,20 +58,18 @@ class DeviceList extends Component {
 
     }
 
-    sendGeoNotification() {
+    sendGeoNotification(flag) {
 
         fetch('/api/geopostnotification', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({lbanner: this.state.lbanner,selectedimg:this.state.selectedimg})
+            body: JSON.stringify({lbanner: this.state.lbanner,selectedimg:this.state.selectedimg,flag:flag})
         }
         ).then(res => res.json()).then(json => {
             console.log(json)
             this.setState({'isdisable': false, isnotify: 'alert alert-success bd', "alertmessage": json.message});
 
         });
-
-
     }
     
     
@@ -85,14 +83,8 @@ class DeviceList extends Component {
                          this.setState({'border':'1px solid red',key:i,'selectedimg':(event.currentTarget).getAttribute('attr')});
                    }} 
             >
-                       <a className="thumbnail" 
-                       style={
-              (()=>{
-                  if(this.state.key===i){
-                                         return ({border:this.state.border})
-                  }
-              })()
-                           } 
+                 <a className="thumbnail" style={ (()=>{
+                  if(this.state.key===i){ return ({border:this.state.border})  }  })()  } 
                            
                         id="carousel-selector-0">
                              <img src={`img/promoimages/${obj}`} style={{'width':'100px','height':'100px'}} />
@@ -219,11 +211,16 @@ class DeviceList extends Component {
                                         <br/>
                 
                                         <button ref='nearbybutton' 
-                                                onClick={
-                                                                                    (e) => {
-                                                                                        this.sendGeoNotification()
-                                                                                                                                                                                  }}
+                                                onClick={  (e) => {  this.sendGeoNotification('') }}
                                                 className="btn btn-primary">Send Notification</button> 
+                                                
+                                        &nbsp;
+                                            <button ref='senbutton'  
+                                                    type="button"  onClick={ (e) => {  this.sendGeoNotification("m");  }}
+                                                    className="btn btn-primary"> IQOS Store Notification</button>
+                                                
+                                                
+                                                
                                     </div>
                                 </div>
                             </div>

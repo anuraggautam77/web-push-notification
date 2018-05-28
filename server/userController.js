@@ -88,12 +88,10 @@ module.exports = class UserController {
         var count = 0, tokencount = 0;
          
         async.each(users, (obj, callbackfirst) => {
-            var userName="User";
+            var userName="Marlboro user";
            if(obj.hasOwnProperty('userDetail')){
             userName=  _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName);
            }  
-            
-        
           
             async.each(obj.token, (token, callbacksecond) => {
                 
@@ -150,6 +148,12 @@ module.exports = class UserController {
 
         var count = 0, tokencount = 0;
         async.each(users, (obj, callbackfirst) => {
+             var userName="IQOS user";
+           if(obj.hasOwnProperty('userDetail')){
+            userName=  _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName);
+           } 
+            
+            
             async.each(obj.token, (token, callbacksecond) => {
                 if (token !== null) {
 
@@ -168,7 +172,7 @@ module.exports = class UserController {
                                         "notification": {
                                             "title": "Nearby Store",
                                             //"body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
-                                            "body": "Hi " + _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName) + ' \n ' + obj.nearby.slice(0, 6).join(),
+                                            "body": "Hi " +userName+ ' \n ' + obj.nearby.slice(0, 8).join(),
                                             "icon": "https://donotifyme.herokuapp.com/img/icons/Icon-57.png",
                                             "click_action": "https://donotifyme.herokuapp.com",
                                             "image": 'https://donotifyme.herokuapp.com/img/promoimages/' + message.selectedimg,

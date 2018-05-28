@@ -8,8 +8,7 @@ const Fcm = require('../../models/fcm');
 
 const Devicefcm = require('../../models/devicefcm');
 
-
-
+const DeviceGeo = require('../../models/devicegeloc');
 const bcrypt = require('bcrypt');
 const Cryptr = require('cryptr');
 const jwt = require('jsonwebtoken');
@@ -41,17 +40,18 @@ const SERVICE_CONST = {
 
     USER_DEVICE_FCM: 'savedevicefcm',
     GET_DEVICE_FCM: 'getdevicefcm',
-    GET_CCN_NOTIFICATION: 'getccnnotification',
+    SET_STORE_LOCATION: 'setstorelocation',
 
+    SET_NEW_LOCATION: 'setnewlocation',
+
+    GET_CCN_NOTIFICATION: 'getccnnotification',
     GET_SUB_NOTIFICATION: 'subnotification',
 
     GET_LOC_DETAIL: 'getsetlocation',
     POST_NOTIFICATION: 'postnotification',
-
     GET_PROMO_IMAGES: 'getpromoimages',
     POST_GEO: 'geopostnotification',
     WHERE_I_AM: 'whereiam',
-    SET_NEW_LOCATION: 'setnewlocation',
     GET_STORES: 'getstores'
 
 };
@@ -182,7 +182,49 @@ module.exports = (apiRoutes) => {
         });
     });
 
+    apiRoutes.post(`/${SERVICE_CONST.SET_STORE_LOCATION}`, function (req, res) {
 
+        var latlng = req.body.latlng;
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+
+        DeviceGeo.find({
+            'userid': req.body.userId
+        }, (error, data) => {
+
+            if (data.length > 0) {
+                var obj = {};
+                obj.sub = true;
+                obj.lat = latlng.split('--')[0];
+                obj.lng = latlng.split('--')[1];
+                obj.zipcodes = req.body.zipcodes;
+                DeviceGeo.update(
+                        {'userid': req.body.userId},
+                        {
+                            $addToSet: {token: req.body.token},
+                            $set: obj
+                        }, (data) => {
+                    res.json({status: "200", message: "Upadte my location Scucessfully!!"});
+                    getnearbylocation(api, req.body.userId, '', 'device');
+
+                });
+            } else {
+                var obj = {};
+
+                obj.sub = true;
+                obj.lat = latlng.split('--')[0];
+                obj.lng = latlng.split('--')[1];
+                obj.zipcodes = req.body.zipcodes;
+                obj.token = req.body.token;
+                obj.userid = req.body.userId;
+                new DeviceGeo(obj).save().then(() => {
+                    res.json({status: "200", message: " Add my location Successfully!! !!!!"});
+                    getnearbylocation(api, req.body.userId, '', 'device');
+                });
+            }
+        });
+
+    });
 
     apiRoutes.get(`/${SERVICE_CONST.GET_FCM}`, (req, res) => {
         Fcm.find((error, list) => {
@@ -298,7 +340,7 @@ module.exports = (apiRoutes) => {
                             $set: obj
                         }, (data) => {
                     res.json({status: "200", api: api, message: "Upadte my location Scucessfully!!"});
-                    getnearbylocation(api, cryptr.decrypt(req.body.userId), "p");
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId), "p", '');
 
                 });
             } else {
@@ -310,7 +352,7 @@ module.exports = (apiRoutes) => {
                 obj.userid = cryptr.decrypt(req.body.userId);
                 new Geo(obj).save().then(() => {
                     res.json({status: "200", message: " Add my location Successfully!! !!!!"});
-                    getnearbylocation(api, cryptr.decrypt(req.body.userId), "p");
+                    getnearbylocation(api, cryptr.decrypt(req.body.userId), "p", '');
                 });
             }
         });
@@ -358,9 +400,7 @@ module.exports = (apiRoutes) => {
         });
 
     });
-    function getnearbylocation(api, id, flag) {
-        console.log(api)
-
+    function getnearbylocation(api, id, flag, type) {
         request.get({
             url: api,
             headers: {
@@ -387,7 +427,6 @@ module.exports = (apiRoutes) => {
                                         }
                                     });
 
-
                                     var obj = {};
                                     if (flag === '') {
                                         obj.nearby = detailData;
@@ -395,10 +434,15 @@ module.exports = (apiRoutes) => {
                                         obj.pnearby = detailData;
                                     }
 
-                                    Geo.update({'userid': id}, {$set: obj}, (data) => {
-                                        console.log(data);
-                                    });
-
+                                    if (type === 'device') {
+                                        DeviceGeo.update({'userid': id}, {$set: obj}, (data) => {
+                                            console.log(data);
+                                        })
+                                    } else {
+                                        Geo.update({'userid': id}, {$set: obj}, (data) => {
+                                            console.log(data);
+                                        })
+                                    }
                                     // res.json({status: "200", stores: detailData, message: "Store List Successfully!! !!!!"});
                                 } else {
                                     console.log("inner");
@@ -414,61 +458,44 @@ module.exports = (apiRoutes) => {
                     }
                 });
 
-
-
-        /*
-         request(api, function (error, response, body) {
-         console.log('error>>>>>>>:', error); // Print the error if one occurred
-         //  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-         console.log('body:', body.results);
-         var detailData = [], body = JSON.parse(body);
-         body.results.forEach((obj, k) => {
-         let count = (k + 1);
-         if (k === 0) {
-         detailData.push(count + ")." + obj.name);
-         } else {
-         detailData.push("\n" + count + ")." + obj.name);
-         }
-         
-         });
-         
-         var obj = {};
-         if (flag === '') {
-         obj.nearby = detailData;
-         } else {
-         obj.pnearby = detailData;
-         }
-         
-         Geo.update({'userid': id}, {$set: obj}, (data) => {
-         console.log(data);
-         });
-         }); */
-
     }
     apiRoutes.post(`/${SERVICE_CONST.POST_GEO}`, function (req, res) {
         let obj = {};
         obj.sub = 'true';
 
-        Geo.aggregate([
-            {"$match": obj},
-            {$lookup: {from: 'users', localField: 'userid', foreignField: '_id', as: 'userDetail'}} // FCM+ user
-        ]).exec((error, results) => {
-            if (error) {
-                res.json({status: error});
-            }
+        if (req.body.flag === "m") {
+            DeviceGeo.find(obj, (error, results) => {
+                if (results.length > 0) {
+                    var contr = new UserController();
+                    contr.GeoToSubscriber(req.body, results, function (data) {
+                        res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
+                    });
+                } else {
+                    res.json({status: "success", message: "No record found!!"});
+                }
+            });
+            
+            
+        } else {
 
+            Geo.aggregate([
+                {"$match": obj},
+                {$lookup: {from: 'users', localField: 'userid', foreignField: '_id', as: 'userDetail'}} // FCM+ user
+            ]).exec((error, results) => {
+                if (error) {
+                    res.json({status: error});
+                }
+                if (results.length > 0) {
+                    var contr = new UserController();
+                    contr.GeoToSubscriber(req.body, results, function (data) {
+                        res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
+                    });
+                } else {
+                    res.json({status: "success", message: "No record found!!"});
+                }
+            });
 
-            if (results.length > 0) {
-                var contr = new UserController();
-                contr.GeoToSubscriber(req.body, results, function (data) {
-                    res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
-                });
-            } else {
-                res.json({status: "success", message: "No record found!!"});
-            }
-
-
-        });
+        }
 
 
     });
@@ -506,8 +533,8 @@ module.exports = (apiRoutes) => {
                 if (results.length > 0) {
                     var contr = new UserController();
                     contr.postToSubscriber(req.body, results, function (data) {
-                       res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
-                   });
+                        res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
+                    });
                 } else {
                     res.json({status: "success", message: "No record found!!"});
                 }
@@ -518,8 +545,6 @@ module.exports = (apiRoutes) => {
 
 
     });
-
-
 
     apiRoutes.get(`/${SERVICE_CONST.GET_LOC_DETAIL}/:id`, (req, res) => {
 
