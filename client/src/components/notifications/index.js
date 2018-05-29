@@ -66,7 +66,7 @@ class DeviceList extends Component {
             body: JSON.stringify({lbanner: this.state.lbanner,selectedimg:this.state.selectedimg,flag:flag})
         }
         ).then(res => res.json()).then(json => {
-            console.log(json)
+            console.log(json);
             this.setState({'isdisable': false, isnotify: 'alert alert-success bd', "alertmessage": json.message});
 
         });

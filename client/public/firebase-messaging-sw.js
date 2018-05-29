@@ -4,12 +4,11 @@ importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
 
 
-const version = "0.89.1";
+const version = "0.121.1";
 const cacheName = `push-${version}`;
 self.addEventListener('install', e => {
     const timeStamp = Date.now();
-    e.waitUntil(
-            caches.open(cacheName).then(cache => {
+    e.waitUntil( caches.open(cacheName).then(cache => {
         return cache.addAll([
                      
         ])
@@ -29,7 +28,6 @@ self.addEventListener('fetch', event => {
 self.addEventListener('sync', function (event) {
 
     event.waitUntil(store.setup('readonly').then(function (currentgeo) {
-        console.log(currentgeo);
         return currentgeo.getAll();
     }).then(function (messages) {
 
@@ -99,7 +97,7 @@ self.addEventListener('push', function (event) {
     var eventData = event.data.text();
     var obj = JSON.parse(eventData); //Parse the received JSON object.
     const options = {
-        icon: "https://donotifyme.herokuapp.com/img/icons/Icon-40.png"
+        icon: obj.notification.icon
     };
 
     if (obj.data['gcm.notification.showbanner'] === 'true') {

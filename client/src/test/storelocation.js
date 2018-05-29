@@ -4,12 +4,7 @@ $(document).ready(function () {
         var serviceurl = 'https://donotifyme.herokuapp.com/api/';
         var CCN, componentWrapper, inputtxt;
 
-        var getCookie = function (name) {
-            var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-            return v ? v[2] : null;
-        };
-
-
+       
         var initialization = function () {
             CCN = getCookie('CCN');
             componentWrapper = $('.device-store-locator');
@@ -60,7 +55,6 @@ $(document).ready(function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (data) { 
-                  
                   window.localStorage.setItem('zipcodes', inputtxt);
                   window.localStorage.setItem('lat-log', myLatLng.lat + '--' + myLatLng.lng);
                 
@@ -69,59 +63,9 @@ $(document).ready(function () {
             }
         };
 
-
-
-
-
         var getCookie = function (name) {
             var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
             return v ? v[2] : null;
-        };
-
-
-        var bttnClickHandler = function (e) {
-            e.preventDefault();
-            var buttonType = e.data.btn;
-            var flag = e.data.defaultdata.status;
-
-            $.ajax({
-                type: 'POST',
-                url: serviceurl + 'savedevicefcm',
-                data: JSON.stringify({
-                    token: window.localStorage.getItem('deviceToken'),
-                    subtype: buttonType,
-                    status: flag,
-                    userId: CCN
-                }),
-                dataType: 'json',
-                contentType: 'application/json',
-                success: function (data) {
-                    if (data.status == '200') {
-                        var obj = {};
-                        if (buttonType === 'C') {
-                            if (flag === 'sub') {
-                                $(couponBtn).html("Unsubscribe for Coupons");
-                                coupon.status = "un";
-                            } else {
-                                $(couponBtn).html("Subscribe for Coupons");
-                                coupon.status = "sub";
-                            }
-                        } else {
-                            if (flag === 'sub') {
-                                $(promoBtn).html("Unsubscribe for Promotions");
-                                promotion.status = "un";
-                            } else {
-                                $(promoBtn).html("Subscribe for Promotions");
-                                promotion.status = "sub";
-                            }
-
-                        }
-                    }
-
-                }
-            });
-
-
         };
 
         return {
