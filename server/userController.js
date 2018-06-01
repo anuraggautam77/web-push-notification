@@ -86,17 +86,17 @@ module.exports = class UserController {
 
     postToSubscriber(message, users, callback) {
         var count = 0, tokencount = 0;
-         
+
         async.each(users, (obj, callbackfirst) => {
-            var userName="Marlboro user";
-           if(obj.hasOwnProperty('userDetail')){
-            userName=  _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName);
-           }  
-          
+            var userName = "Marlboro user";
+            if (obj.hasOwnProperty('userDetail')) {
+                userName = _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName);
+            }
+
             async.each(obj.token, (token, callbacksecond) => {
-                
-                    console.log(userName)
-                  if (token !== null) {
+
+                console.log(userName)
+                if (token !== null) {
                     tokencount++;
                     request({
                         url: 'https://fcm.googleapis.com/fcm/send',
@@ -109,7 +109,7 @@ module.exports = class UserController {
                                 {
                                     "notification": {
                                         "title": message.title,
-                                        "body": message.text.replace('{{name}}',userName ),
+                                        "body": message.text.replace('{{name}}', userName),
                                         "icon": "https://donotifyme.herokuapp.com/img/icons/64.png",
                                         "click_action": "https://donotifyme.herokuapp.com",
                                         "image": 'https://donotifyme.herokuapp.com/img/promoimages/' + message.selectedimg,
@@ -135,25 +135,23 @@ module.exports = class UserController {
 
                         }
                     })
-                }  
+                }
             }, function (err) {
                 console.log("async inner each done");
-            })  
+            })
         },
                 function (err) {
                     console.log("async.each done");
                 });
     }
     GeoToSubscriber(message, users, callback) {
-
         var count = 0, tokencount = 0;
         async.each(users, (obj, callbackfirst) => {
-             var userName="IQOS user";
-           if(obj.hasOwnProperty('userDetail')){
-            userName=  _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName);
-           } 
-            
-            
+            var userName = "IQOS user";
+            if (obj.hasOwnProperty('userDetail')) {
+                userName = _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName);
+            }
+
             async.each(obj.token, (token, callbacksecond) => {
                 if (token !== null) {
 
@@ -172,7 +170,7 @@ module.exports = class UserController {
                                         "notification": {
                                             "title": "Nearby Store",
                                             //"body": message.text.replace('{{name}}', _.capitalize(obj.userDetail[0].firstName) + ' ' + _.capitalize(obj.userDetail[0].lastName)),
-                                            "body": "Hi " +userName+ ' \n ' + obj.nearby.slice(0, 8).join(),
+                                            "body": "Hi " + userName + ' \n ' + obj.nearby.slice(0, 8).join(),
                                             "icon": "https://donotifyme.herokuapp.com/img/icons/Icon-57.png",
                                             "click_action": "https://donotifyme.herokuapp.com",
                                             "image": 'https://donotifyme.herokuapp.com/img/promoimages/' + message.selectedimg,
@@ -188,7 +186,7 @@ module.exports = class UserController {
                                 console.error('HTTP Error: ' + response.statusCode + ' - ' + response.statusMessage + '\n' + body);
                             } else {
                                 count++;
-                                console.log(count + '.Send to ' + obj.userDetail[0].firstName);
+                                console.log(count + '.Send to ' + userName);
                                 if (count === tokencount) {
                                     callback(count);
                                     console.log("/////////////////////");

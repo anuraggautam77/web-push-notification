@@ -1,5 +1,5 @@
-importScripts('/store/idb.js');
-importScripts('/store/store.js');
+importScripts('/etc/designs/clientlibs/alcs/pwacommon/js/pwa/store/idb.js');
+importScripts('/etc/designs/clientlibs/alcs/pwacommon/js/pwa/store/store.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/3.5.2/firebase-messaging.js');
 
@@ -8,13 +8,14 @@ const version = "0.121.1";
 const cacheName = `push-${version}`;
 self.addEventListener('install', e => {
     const timeStamp = Date.now();
-    e.waitUntil( caches.open(cacheName).then(cache => {
+    e.waitUntil(caches.open(cacheName).then(cache => {
         return cache.addAll([
-                     
         ])
                 .then(() => self.skipWaiting());
     })
             );
+
+
 });
 
 self.addEventListener('activate', event => {
@@ -22,12 +23,13 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
- 
+
 });
 
 self.addEventListener('sync', function (event) {
 
-    event.waitUntil(store.setup('readonly').then(function (currentgeo) {
+    event.waitUntil(IndexedDBstore.setup('readonly').then(function (currentgeo) {
+        console.log(currentgeo);
         return currentgeo.getAll();
     }).then(function (messages) {
 
@@ -35,20 +37,11 @@ self.addEventListener('sync', function (event) {
 
             var updatedLastData = messages[messages.length - 1];
             var data = {latlng: null, zipcodes: null};
-            var title = '';
-            if (updatedLastData.type === "moving") {
-                data.latlng = updatedLastData.clatlng;
-                data.zipcodes = updatedLastData.czipcodes;
-                title = "Near by Store Details!";
-            } else {
-                data.latlng = updatedLastData.platlng;
-                data.zipcodes = updatedLastData.pzipcodes;
-                title = "Dyanamic store Details!";
-            }
-
+            data.latlng = updatedLastData.clatlng;
+            data.zipcodes = updatedLastData.czipcodes;
             data.time = new Date().toISOString();
 
-            return fetch('/api/getstores', {
+            return fetch('https://donotifyme.herokuapp.com/api/getstores', {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
@@ -65,7 +58,7 @@ self.addEventListener('sync', function (event) {
                         icon: "https://donotifyme.herokuapp.com/img/icons/Icon-57.png"
                     };
                     options.body = data.stores.slice(0, 6).join();
-                    const title = "Nearby store alert";
+                    const title = "Near by Store Details!";
                     event.waitUntil(self.registration.showNotification(title, options));
                 }
 
@@ -110,5 +103,5 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
     event.notification.close();
-    event.waitUntil(clients.openWindow('https://donotifyme.herokuapp.com'));
+    //event.waitUntil(clients.openWindow('https://donotifyme.herokuapp.com'));
 });

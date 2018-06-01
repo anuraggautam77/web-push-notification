@@ -19,7 +19,7 @@ var store = {
         });
     },
 
-    storeinIdb: function (type) {
+    storeinIdb: function (type, isTrigger) {
         var data = {
             platlng: window.localStorage.getItem('plat-log'),
             pzipcodes: window.localStorage.getItem('pzipcodes'),
@@ -34,7 +34,12 @@ var store = {
         store.setup('readwrite').then(function ($opts) {
             return $opts.add(data);
         }).then(function (data) {
-            return store.reg.sync.register('currentgeo');
+            if(isTrigger){
+                return store.reg.sync.register('currentgeo'); 
+            }else{
+                return data;
+            }
+           
         }).catch(function (err) {
             // something went wrong with the database or the sync registration, log and submit the form
             console.error(err);

@@ -38,20 +38,26 @@ const SERVICE_CONST = {
     USER_FCM: 'savefcm',
     GET_FCM: 'getfcm',
 
+    GET_CCN_NOTIFICATION: 'getccnnotification',
+    GET_SUB_NOTIFICATION: 'subnotification',
     USER_DEVICE_FCM: 'savedevicefcm',
     GET_DEVICE_FCM: 'getdevicefcm',
     SET_STORE_LOCATION: 'setstorelocation',
+    SET_DYANAMIC_LOCATION: 'setdynamiclocation',
+    
+    
+    
+    
 
     SET_NEW_LOCATION: 'setnewlocation',
-
-    GET_CCN_NOTIFICATION: 'getccnnotification',
-    GET_SUB_NOTIFICATION: 'subnotification',
-
     GET_LOC_DETAIL: 'getsetlocation',
+    
     POST_NOTIFICATION: 'postnotification',
-    GET_PROMO_IMAGES: 'getpromoimages',
     POST_GEO: 'geopostnotification',
+    GET_PROMO_IMAGES: 'getpromoimages',
     WHERE_I_AM: 'whereiam',
+    
+    
     GET_STORES: 'getstores'
 
 };
@@ -111,15 +117,56 @@ module.exports = (apiRoutes) => {
             res.status(objCheck.status).json({status: objCheck.status, message: objCheck.message});
         }
     });
-    /* apiRoutes.post(`/${SERVICE_CONST.IMAGE_UPLOAD}`, (req, res, next) => {
-     let imageFile = req.files.file;
-     imageFile.mv(`${folderpath}\\${req.body.filename}`, function (err) {
-     if (err) {
-     return res.status(500).send(err);
-     }
-     res.json({file: "images/" + req.body.filename});
-     });
-     });*/
+     
+
+    apiRoutes.get(`/${SERVICE_CONST.GET_FCM}`, (req, res) => {
+        Fcm.find((error, list) => {
+            if (list.length > 0) {
+                res.json({status: "success", list: list});
+            } else {
+                res.json({status: "success", message: "No record found!!!!"});
+            }
+        });
+    });
+    apiRoutes.post(`/${SERVICE_CONST.USER_FCM}`, function (req, res) {
+        Fcm.find({
+            'userid': cryptr.decrypt(req.body.userId)
+        }, (error, data) => {
+
+            if (data.length > 0) {
+                var obj = {};
+                if (req.body.subtype === 'P') {
+                    obj.promotiontype = req.body.status;
+                } else {
+                    obj.coupontype = req.body.status;
+                }
+
+                Fcm.update(
+                        {'userid': cryptr.decrypt(req.body.userId)},
+                        {
+                            $addToSet: {token: req.body.token},
+                            $set: obj
+                        }, (data) => {
+                    res.json({status: "200", message: "Subscribe Updtaed Scucessfully!!"});
+                });
+            } else {
+                var obj = {};
+                if (req.body.subtype === 'P') {
+                    obj.promotiontype = req.body.status;
+                } else {
+                    obj.coupontype = req.body.status;
+                }
+                obj.token = req.body.token;
+                obj.userid = cryptr.decrypt(req.body.userId);
+                new Fcm(obj).save().then(() => {
+                    res.json({status: "200", message: "Subscribe Successfully!! !!!!"});
+                });
+            }
+        });
+    });
+     
+     
+     
 
     apiRoutes.get(`/${SERVICE_CONST.GET_CCN_NOTIFICATION}/:id`, (req, res) => {
         let decryptedString = req.params.id;
@@ -225,57 +272,56 @@ module.exports = (apiRoutes) => {
         });
 
     });
+    
+     apiRoutes.post(`/${SERVICE_CONST.SET_DYANAMIC_LOCATION}`, function (req, res) {
 
-    apiRoutes.get(`/${SERVICE_CONST.GET_FCM}`, (req, res) => {
-        Fcm.find((error, list) => {
-            if (list.length > 0) {
-                res.json({status: "success", list: list});
-            } else {
-                res.json({status: "success", message: "No record found!!!!"});
-            }
-        });
-    });
-    apiRoutes.post(`/${SERVICE_CONST.USER_FCM}`, function (req, res) {
-        Fcm.find({
-            'userid': cryptr.decrypt(req.body.userId)
+        var latlng = req.body.platlng;
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
+                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+
+        DeviceGeo.find({
+            'userid': req.body.userId
         }, (error, data) => {
 
             if (data.length > 0) {
                 var obj = {};
-                if (req.body.subtype === 'P') {
-                    obj.promotiontype = req.body.status;
-                } else {
-                    obj.coupontype = req.body.status;
-                }
 
-                Fcm.update(
-                        {'userid': cryptr.decrypt(req.body.userId)},
+                obj.plat = latlng.split('--')[0];
+                obj.plng = latlng.split('--')[1];
+                obj.pzipcodes = req.body.pzipcodes;
+                DeviceGeo.update(
+                        {'userid': req.body.userId},
                         {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", message: "Subscribe Updtaed Scucessfully!!"});
+                    res.json({status: "200", api: api, message: "Upadte my location Scucessfully!!"});
+                    getnearbylocation(api, req.body.userId, "p", '','device');
+
                 });
             } else {
                 var obj = {};
-                if (req.body.subtype === 'P') {
-                    obj.promotiontype = req.body.status;
-                } else {
-                    obj.coupontype = req.body.status;
-                }
+                obj.plat = latlng.split('--')[0];
+                obj.plng = latlng.split('--')[1];
+                obj.pzipcodes = req.body.pzipcodes;
                 obj.token = req.body.token;
-                obj.userid = cryptr.decrypt(req.body.userId);
-                new Fcm(obj).save().then(() => {
-                    res.json({status: "200", message: "Subscribe Successfully!! !!!!"});
+                obj.userid = req.body.userId;
+                new DeviceGeo(obj).save().then(() => {
+                    res.json({status: "200", message: " Add my location Successfully!! !!!!"});
+                    getnearbylocation(api, req.body.userId, "p", '','device');
                 });
             }
         });
     });
+    
+    
+    
     apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
         var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
-
+       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+       console.log(api);
         //   var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
         request.get({
             url: api,
@@ -317,6 +363,67 @@ module.exports = (apiRoutes) => {
                 });
 
     });
+    
+    
+     apiRoutes.post(`/${SERVICE_CONST.SET_DYANAMIC_LOCATION}`, function (req, res) {
+
+        var latlng = req.body.platlng;
+        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
+                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+
+        DeviceGeo.find({
+            'userid': req.body.userId
+        }, (error, data) => {
+
+            if (data.length > 0) {
+                var obj = {};
+
+                obj.plat = latlng.split('--')[0];
+                obj.plng = latlng.split('--')[1];
+                obj.pzipcodes = req.body.pzipcodes;
+                DeviceGeo.update(
+                        {'userid': req.body.userId},
+                        {
+                            $addToSet: {token: req.body.token},
+                            $set: obj
+                        }, (data) => {
+                    res.json({status: "200", api: api, message: "Upadte my location Scucessfully!!"});
+                    getnearbylocation(api, req.body.userId, "p", '','device');
+
+                });
+            } else {
+                var obj = {};
+                obj.plat = latlng.split('--')[0];
+                obj.plng = latlng.split('--')[1];
+                obj.pzipcodes = req.body.pzipcodes;
+                obj.token = req.body.token;
+                obj.userid = cryptr.decrypt(req.body.userId);
+                new DeviceGeo(obj).save().then(() => {
+                    res.json({status: "200", message: " Add my location Successfully!! !!!!"});
+                    getnearbylocation(api, req.body.userId, "p", '','device');
+                });
+            }
+        });
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
 
         var latlng = req.body.platlng;
@@ -474,8 +581,8 @@ module.exports = (apiRoutes) => {
                     res.json({status: "success", message: "No record found!!"});
                 }
             });
-            
-            
+
+
         } else {
 
             Geo.aggregate([

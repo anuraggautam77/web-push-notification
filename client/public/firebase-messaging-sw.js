@@ -43,7 +43,6 @@ self.addEventListener('sync', function (event) {
             } else {
                 data.latlng = updatedLastData.platlng;
                 data.zipcodes = updatedLastData.pzipcodes;
-
                 title = "Dyanamic store Details!";
             }
 
