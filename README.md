@@ -61,7 +61,7 @@ npm run start:dev
 Created by [@anuraggautam77](https://www.linkedin.com/in/anuraggautam77/)
  
 
-[![React Router](https://www.buymeacoffee.com/assets/img/bmc-f-logo.svg)](https://www.buymeacoffee.com/fL0O9wW)
+Buy Anurag Gautam a coffee [![React Router](https://www.buymeacoffee.com/assets/img/bmc-f-logo.svg)](https://www.buymeacoffee.com/fL0O9wW)
 
 
 
