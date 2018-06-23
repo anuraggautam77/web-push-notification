@@ -34,7 +34,6 @@ var store = {
         store.setup('readwrite').then(function ($opts) {
             return $opts.add(data);
         }).then(function (data) {
-            
             if(isTrigger){
                 return store.reg.sync.register('currentgeo'); 
             }else{

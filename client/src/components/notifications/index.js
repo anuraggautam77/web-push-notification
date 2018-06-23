@@ -6,13 +6,15 @@ class DeviceList extends Component {
         this.state = {
             ptype: '',
             isnotify: 'dn',
-            text: 'Hi {{name}}, Nice to have your',
-            title: 'Lets Connect',
+            text: 'Hi {{name}}, Notification Body',
+            title: 'Notification Title',
             lbanner: false,
             pbanner: false,
             isdisable: true,
             bodytext: 'db',
             imageicon: 'dn',
+            promotype:'dn',
+            typeofpromo:'',
             selectedimg:'',
             flag:'',
             arrImage:[]
@@ -116,7 +118,17 @@ class DeviceList extends Component {
                         let disable = true;
                         if (event.target.value !== '') {
                                 disable = false;
-                             this.setState({ 'ptype': event.target.value, 'isdisable': disable })
+                                
+                               if(event.target.value==="p"){
+                                    this.setState({ 'ptype': event.target.value, 'isdisable': disable,promotype:'' })
+                               }else{
+                               
+                      var text='Hi {{name}}, GET 2 MOBILE COUPONS EVERY WEEK ,Visit the coupons page of Marlboro.com on your mobile phone. ';
+                          var title=" Get Coupon offer every MONTH / Week!";
+                               
+                                this.setState({ 'ptype': event.target.value, 'isdisable': disable,promotype:'dn', text:text,title:title })
+                               }
+                            
                         }}} 
                                            
                         className="form-control">
@@ -124,10 +136,35 @@ class DeviceList extends Component {
                                             <option value="c">Coupons</option>
                                             <option value="p">Promotions</option>
                                         </select>
+                  <br/>
                 
-                
-                                        <br/>
-                
+                 <div  id="type-promotion"  className={this.state.promotype}  >
+                    Select Promotion Type:
+                        <select onChange={(event) => {
+                      
+                        if (event.target.value !== '') {
+                             var text='', title='';
+                              if(event.target.value==="find27"){
+                                  text='Hi {{name}}, 27 is Out there. Take time to find it';
+                                  title="Find 27 is Out!";
+                                  
+                              }
+                              
+                               if(event.target.value==="ppass"){
+                                  text='Hi {{name}}, you are invited to discover 6 SMOOTH, ORIGINAL EXPERIENCES';
+                                  title="Premium Pass is Out!";
+                              }
+                              
+                             this.setState({ 'typeofpromo': event.target.value ,text:text, title:title })
+                        }}} 
+                                           
+                        className="form-control">
+                                            <option value="">Select one</option>
+                                            <option value="find27">Find 27</option>
+                                            <option value="ppass">Premium Pass</option>
+                                        </select>
+                     <br/>
+                  </div>
                 
                                         <p> Add your customize Notification Message below</p>  
                                         <input type="text" id="title"   value ={ this.state.title}  className="form-control" 
@@ -150,6 +187,12 @@ class DeviceList extends Component {
                 
                 
                                         <br/>
+                
+                
+               
+                
+                
+                
                 
                    <div  id="slider-thumbs" className={this.state.imageicon}>
                 
