@@ -571,10 +571,18 @@ module.exports = (apiRoutes) => {
         obj.sub = 'true';
 
         if (req.body.flag === "m") {
+              
             DeviceGeo.find(obj, (error, results) => {
+                  console.log("><<<<<>>>>>>>>>>")
+                console.log(results);
+                
                 if (results.length > 0) {
                     var contr = new UserController();
                     contr.GeoToSubscriber(req.body, results, function (data) {
+                        console.log(">>>>>>>>>>>")
+                          console.log(data);
+                
+                        
                         res.json({status: "success", message: "Notification(s) send to " + data + " Device(s)!"});
                     });
                 } else {
