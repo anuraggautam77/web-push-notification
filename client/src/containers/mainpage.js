@@ -197,7 +197,7 @@ class MainPage extends Component {
                                                 <div className="landing-page">
                                             
                                                     <div className="col-md-6 col-sm-6">
-                                                        <div className="title-col">IQOS - Want to get notified about nearby Mobile Stores?</div>
+                                                        <div className="title-col">Want to get notified about nearby Mobile Stores?</div>
                                                         <div className="panel panel-default">
                                                             <div className="panel-heading">
                                                                 <h5><b>Please share your location. Application will auto notify, when we have Mobile store nearby</b> </h5>
