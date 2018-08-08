@@ -77,16 +77,16 @@ self.addEventListener('sync', function (event) {
             );
 });
 
-var config = {
-    apiKey: "AIzaSyAxUoFv6a4aIOr1UqsS960Vuo2xoQFdki0",
-    authDomain: "mystuff-57cd4.firebaseapp.com",
-    databaseURL: "https://mystuff-57cd4.firebaseio.com",
-    projectId: "mystuff-57cd4",
-    storageBucket: "mystuff-57cd4.appspot.com",
-    messagingSenderId: "58394593767"
-};
-
-firebase.initializeApp(config);
+ // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAkBtJl8rWxCKHHQqrdgIA9FTrdp8S8rMI",
+    authDomain: "fir-97b6e.firebaseapp.com",
+    databaseURL: "https://fir-97b6e.firebaseio.com",
+    projectId: "fir-97b6e",
+    storageBucket: "",
+    messagingSenderId: "1071020519889"
+  };
+  firebase.initializeApp(config);
 
 //const messaging = firebase.messaging();
 
