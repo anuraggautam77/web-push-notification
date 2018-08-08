@@ -103,7 +103,7 @@ module.exports = class UserController {
                         method: 'POST',
                         headers: {
                             'Content-Type': ' application/json',
-                            'Authorization': 'key=AIzaSyCZk3C2aQwpNmOV6j8i4TEOSH6409PtD08'
+                            'Authorization': 'key=AIzaSyDwbkJd-lz_OLS8Vb62wU3kv55wV500MA8'
                         },
                         body: JSON.stringify(
                                 {
