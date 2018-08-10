@@ -149,17 +149,33 @@ class DeviceList extends Component {
                                   title="Find 27 is Out!";
                                   
                               }
-                              
                                if(event.target.value==="ppass"){
                                   text='Hi {{name}}, you are invited to discover 6 SMOOTH, ORIGINAL EXPERIENCES';
                                   title="Premium Pass is Out!";
                               }
+                              
+                               if(event.target.value==="pointwest"){
+                                  text='Hi {{name}}, There’s still time to earn points and get rewards';
+                                  title="Earn point until 9/15 ";
+                              }
+                               if(event.target.value==="ranch"){
+                                text='Hi {{name}}, The trip comes once in a lifeTime. your chance to win comes once a month.';
+                                  title="Win the trip of a lifetime!";
+                              }
+                               if(event.target.value==="mcertifed"){
+                                  text='Hi {{name}}, you are invited to discover 6 SMOOTH, ORIGINAL EXPERIENCES';
+                                  title=" Enter daily for a chance to win from 8.27.18";
+                              }
+                              
                               
                              this.setState({ 'typeofpromo': event.target.value ,text:text, title:title })
                         }}} 
                                            
                         className="form-control">
                                             <option value="">Select one</option>
+                                            <option value="pointwest">Point West</option>
+                                            <option value="ranch">Ranch</option>
+                                             <option value="mcertifed">Marlboro Certified</option>
                                             <option value="find27">Find 27</option>
                                             <option value="ppass">Premium Pass</option>
                                         </select>
