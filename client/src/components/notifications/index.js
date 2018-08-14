@@ -144,40 +144,25 @@ class DeviceList extends Component {
                       
                         if (event.target.value !== '') {
                              var text='', title='';
-                              if(event.target.value==="find27"){
-                                  text='Hi {{name}}, 27 is Out there. Take time to find it';
-                                  title="Find 27 is Out!";
+                             
+                              if(event.target.value==="p1"){
+                                  text='Hi {{name}}, Promotion One is Out there for you. Take time to find it';
+                                  title="Promotion one is Out!";
                                   
                               }
-                               if(event.target.value==="ppass"){
-                                  text='Hi {{name}}, you are invited to discover 6 SMOOTH, ORIGINAL EXPERIENCES';
-                                  title="Premium Pass is Out!";
+                               if(event.target.value==="p2"){
+                                  text='Hi {{name}}, Still you can earn points with Promotion two';
+                                  title="Promotion Two is Out!";
+                                  
                               }
-                              
-                               if(event.target.value==="pointwest"){
-                                  text='Hi {{name}}, There’s still time to earn points and get rewards';
-                                  title="Earn point until 9/15 ";
-                              }
-                               if(event.target.value==="ranch"){
-                                text='Hi {{name}}, The trip comes once in a lifeTime. your chance to win comes once a month.';
-                                  title="Win the trip of a lifetime!";
-                              }
-                               if(event.target.value==="mcertifed"){
-                                  text='Hi {{name}}, you are invited to discover 6 SMOOTH, ORIGINAL EXPERIENCES';
-                                  title=" Enter daily for a chance to win from 8.27.18";
-                              }
-                              
                               
                              this.setState({ 'typeofpromo': event.target.value ,text:text, title:title })
                         }}} 
                                            
                         className="form-control">
                                             <option value="">Select one</option>
-                                            <option value="pointwest">Point West</option>
-                                            <option value="ranch">Ranch</option>
-                                             <option value="mcertifed">Marlboro Certified</option>
-                                            <option value="find27">Find 27</option>
-                                            <option value="ppass">Premium Pass</option>
+                                             <option value="p1">Promotion One</option>
+                                            <option value="p2">Promotion Two</option>
                                         </select>
                      <br/>
                   </div>
@@ -227,17 +212,12 @@ class DeviceList extends Component {
                                         <br/> 
                 
                                         <div style={{'clear': 'both'}}>
-                                            <button ref='senbutton' disabled={ this.state.isdisable}
-                                                    type="button"  onClick={ (e) => {
-                                                                            this.sendNotification("");
-                                  }}
-                                                    className="btn btn-primary">Send Notification</button> 
-                                         &nbsp;
+                                          
                                             <button ref='senbutton' disabled={ this.state.isdisable}
                                                     type="button"  onClick={ (e) => {
                                                                             this.sendNotification("m");
                                   }}
-                                                    className="btn btn-primary">Trigger Marlboro Notification</button> 
+                                                    className="btn btn-primary">Trigger Notification</button> 
                                         </div>
                                         
                                         
@@ -268,15 +248,10 @@ class DeviceList extends Component {
                                                                                  }}
                                                                                  /></p>  
                                         <br/>
-                
-                                        <button ref='nearbybutton' 
-                                                onClick={  (e) => {  this.sendGeoNotification('') }}
-                                                className="btn btn-primary">Send Notification</button> 
-                                                
-                                        &nbsp;
+                                        
                                             <button ref='senbutton'  
                                                     type="button"  onClick={ (e) => {  this.sendGeoNotification("m");  }}
-                                                    className="btn btn-primary"> IQOS Store Notification</button>
+                                                    className="btn btn-primary"> Near by Store Notification</button>
                                                 
                                                 
                                                 

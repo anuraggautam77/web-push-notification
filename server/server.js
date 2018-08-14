@@ -38,7 +38,7 @@ pdfParser.loadPDF("StyleGuide_Cope.pdf");
 const app = express();
 const apiRoutes = express.Router();
 const isDev = process.env.NODE_ENV !== 'production';
-const port = process.env.PORT || 3300;
+const port = process.env.PORT || 1200;
 
 const server = app.listen(port, function () {
     console.log('Express server listening on port ' + port);
