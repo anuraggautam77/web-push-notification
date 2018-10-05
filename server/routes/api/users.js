@@ -232,9 +232,10 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.SET_STORE_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
-                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
-
+       // var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+           //     + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+       var api=`https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=${req.body.zipcodes}&Radius=15&storeTypes=FlagshipStore%2CMRU&serviceTypes=&date=${req.body.time}`;
+ 
         DeviceGeo.find({
             'userid': req.body.userId
         }, (error, data) => {
