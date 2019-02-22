@@ -94,10 +94,10 @@ app.use('/api', apiRoutes);
                         },
                         body: JSON.stringify( {
                                     "notification": {
-                                        "title": "czxczczxcxzcxzcxzc",
-                                        "body": "hello anurag",
-                                        "icon": "https://donotifyme.herokuapp.com/img/icons/64.png",
-                                        "click_action": "https://donotifyme.herokuapp.com",
+                                        "title": obj.title,
+                                        "body": obj.message,
+                                        "icon": "https://dz7plzbrv7h3x.cloudfront.net/img/icons/android/Icon-192.png",
+                                        "click_action": "https://dz7plzbrv7h3x.cloudfront.net/signin",
                                         "image": 'https://s3.ap-south-1.amazonaws.com/pwaimagesnotify/devops.PNG',
                                         "showbanner":true
                                     },
