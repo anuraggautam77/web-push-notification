@@ -11,6 +11,9 @@ const path = require('path');
 const config = require('../config/configuration');
 const cors = require('cors');
 
+const async = require('async');
+const request = require('request');
+
 /*
 const PDFParser = require("pdf2json");
 const StringifyStream = require('stringifystream');
@@ -72,6 +75,53 @@ app.use(function (req, res, next) {
 
 
 app.use('/api', apiRoutes);
+
+ app.post('/awsnotification', function (req, res) {
+	  async.each(req.body, (obj, callbacksecond) => {
+                if (obj.token !== null) {
+ 
+                        request({
+                        url: 'https://fcm.googleapis.com/fcm/send',
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': ' application/json',
+                            'Authorization': 'key=AIzaSyB93ocm-8JUF4oFDXDD6nKEykHSyym7-s8'
+                        },
+                        body: JSON.stringify( {
+                                    "notification": {
+                                        "title": "czxczczxcxzcxzcxzc",
+                                        "body": "hello anurag",
+                                        "icon": "https://donotifyme.herokuapp.com/img/icons/64.png",
+                                        "click_action": "https://donotifyme.herokuapp.com",
+                                        "image": 'https://s3.ap-south-1.amazonaws.com/pwaimagesnotify/devops.PNG',
+                                        "showbanner":true
+                                    },
+                                    "to": obj.token
+                                }
+                        )
+                    }, function (error, response, body) {
+                            if (error) {
+                                console.error(error, response, body);
+                            } else if (response.statusCode >= 400) {
+                                console.error('HTTP Error: ' + response.statusCode + ' - ' + response.statusMessage + '\n' + body);
+                            } else {
+                                consoloe.log(body)
+
+                            }
+                        });
+
+                     
+                }
+
+            }, function (err) {
+                console.log("async inner each done");
+            })
+	  
+	  
+	  
+		
+		
+});
 
 // API routes
 require('./routes')(apiRoutes);
