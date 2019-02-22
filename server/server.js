@@ -77,7 +77,12 @@ app.use(function (req, res, next) {
 app.use('/api', apiRoutes);
 
  app.post('/awsnotification', function (req, res) {
+   console.log(JSON.stringify(req.body))
 	  async.each(req.body, (obj, callbacksecond) => {
+      console.log("innerLoop>>>>>>>>>>>>>>>>>>>>>");
+      console.log(JSON.stringify(obj));
+
+
                 if (obj.token !== null) {
  
                         request({
