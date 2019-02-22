@@ -96,9 +96,9 @@ app.use('/api', apiRoutes);
                                     "notification": {
                                         "title": obj.title,
                                         "body": obj.message,
-                                        "icon": "https://dz7plzbrv7h3x.cloudfront.net/img/icons/android/Icon-192.png",
-                                        "click_action": "https://dz7plzbrv7h3x.cloudfront.net/signin",
-                                        "image": 'https://s3.ap-south-1.amazonaws.com/pwaimagesnotify/devops.PNG',
+                                        "icon": obj.icon,
+                                        "click_action": obj.click_action,
+                                        "image": obj.image,
                                         "showbanner":true
                                     },
                                     "to": obj.token
