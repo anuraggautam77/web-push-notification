@@ -110,7 +110,7 @@ app.use('/api', apiRoutes);
                             } else if (response.statusCode >= 400) {
                                 console.error('HTTP Error: ' + response.statusCode + ' - ' + response.statusMessage + '\n' + body);
                             } else {
-                                consoloe.log(body)
+                                console.log(body)
 
                             }
                         });
