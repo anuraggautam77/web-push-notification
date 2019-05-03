@@ -90,7 +90,7 @@ app.use('/api', apiRoutes);
                         method: 'POST',
                         headers: {
                             'Content-Type': ' application/json',
-                            'Authorization': 'key=AIzaSyB93ocm-8JUF4oFDXDD6nKEykHSyym7-s8'
+                            'Authorization': 'AIzaSyDTq0EuIQFLW2e3-a_unMfI7Bl2iTpjemg'
                         },
                         body: JSON.stringify( {
                                     "notification": {
