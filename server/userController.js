@@ -103,7 +103,7 @@ module.exports = class UserController {
                         method: 'POST',
                         headers: {
                             'Content-Type': ' application/json',
-                            'Authorization': 'AIzaSyDTq0EuIQFLW2e3-a_unMfI7Bl2iTpjemg'
+                            'Authorization': 'AIzaSyBhI8nDQw4C8QRejTkXpxjN1Ar-Lkjrivw'
                         },
                         body: JSON.stringify(
                                 {
@@ -163,7 +163,7 @@ module.exports = class UserController {
                             method: 'POST',
                             headers: {
                                 'Content-Type': ' application/json',
-                                'Authorization': 'AIzaSyDTq0EuIQFLW2e3-a_unMfI7Bl2iTpjemg'
+                                'Authorization': 'AIzaSyBhI8nDQw4C8QRejTkXpxjN1Ar-Lkjrivw'
                             },
                             body: JSON.stringify(
                                     {
