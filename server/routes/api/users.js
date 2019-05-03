@@ -232,9 +232,9 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.SET_STORE_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
-       // var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+       // var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
            //     + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
-       var api=`https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=${req.body.zipcodes}&Radius=15&storeTypes=FlagshipStore%2CMRU&serviceTypes=&date=${req.body.time}`;
+       var api=`https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=${req.body.zipcodes}&Radius=15&storeTypes=FlagshipStore%2CMRU&serviceTypes=&date=${req.body.time}`;
  
         DeviceGeo.find({
             'userid': req.body.userId
@@ -252,7 +252,7 @@ module.exports = (apiRoutes) => {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", message: "Upadte my location Scucessfully!!"});
+                    res.json({status: "200", message: "Update my location Scucessfully!!"});
                     getnearbylocation(api, req.body.userId, '', 'device');
 
                 });
@@ -277,7 +277,7 @@ module.exports = (apiRoutes) => {
      apiRoutes.post(`/${SERVICE_CONST.SET_DYANAMIC_LOCATION}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
+        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
         DeviceGeo.find({
@@ -296,7 +296,7 @@ module.exports = (apiRoutes) => {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", api: api, message: "Upadte my location Scucessfully!!"});
+                    res.json({status: "200", api: api, message: "Update my location Scucessfully!!"});
                     getnearbylocation(api, req.body.userId, "p", '','device');
 
                 });
@@ -318,7 +318,7 @@ module.exports = (apiRoutes) => {
     
     
     apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -369,7 +369,7 @@ module.exports = (apiRoutes) => {
      apiRoutes.post(`/${SERVICE_CONST.SET_DYANAMIC_LOCATION}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
+        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
         DeviceGeo.find({
@@ -388,7 +388,7 @@ module.exports = (apiRoutes) => {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", api: api, message: "Upadte my location Scucessfully!!"});
+                    res.json({status: "200", api: api, message: "Update my location Scucessfully!!"});
                     getnearbylocation(api, req.body.userId, "p", '','device');
 
                 });
@@ -428,7 +428,7 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
+        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
         Geo.find({
@@ -447,7 +447,7 @@ module.exports = (apiRoutes) => {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", api: api, message: "Upadte my location Scucessfully!!"});
+                    res.json({status: "200", api: api, message: "Update my location Scucessfully!!"});
                     getnearbylocation(api, cryptr.decrypt(req.body.userId), "p", '');
 
                 });
@@ -468,7 +468,7 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.SET_NEW_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
-        var api = 'https://dev3-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
+        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
                 + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
 
         Geo.find({
@@ -487,7 +487,7 @@ module.exports = (apiRoutes) => {
                             $addToSet: {token: req.body.token},
                             $set: obj
                         }, (data) => {
-                    res.json({status: "200", message: "Upadte my location Scucessfully!!"});
+                    res.json({status: "200", message: "Update my location Scucessfully!!"});
                     getnearbylocation(api, cryptr.decrypt(req.body.userId), '');
 
                 });
