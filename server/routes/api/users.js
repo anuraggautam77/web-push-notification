@@ -322,8 +322,8 @@ module.exports = (apiRoutes) => {
             url: api,
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36',
-                'Content-Type': 'application/json; charset=utf-8',
-                'Cookie': "testcookie=true; path=/; domain=.getiqos.com; Expires=Tue, 19 Jan 2038 03:14:07 GMT;"
+                'Content-Type': 'application/json; charset=utf-8'
+              
             },
             method: 'get'
         },
