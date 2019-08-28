@@ -232,9 +232,7 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.SET_STORE_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
-       // var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
-           //     + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
-       var api=`https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=${req.body.zipcodes}&Radius=15&storeTypes=FlagshipStore%2CMRU&serviceTypes=&date=${req.body.time}`;
+       // var api = '';
  
         DeviceGeo.find({
             'userid': req.body.userId
@@ -277,8 +275,7 @@ module.exports = (apiRoutes) => {
      apiRoutes.post(`/${SERVICE_CONST.SET_DYANAMIC_LOCATION}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
-                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+        var api = '';
 
         DeviceGeo.find({
             'userid': req.body.userId
