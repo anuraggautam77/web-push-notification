@@ -315,11 +315,8 @@ module.exports = (apiRoutes) => {
     
     
     apiRoutes.post(`/${SERVICE_CONST.GET_STORES}`, function (req, res) {
-        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
-                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
-
-       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-       console.log(api);
+        var api = '';
+      
         //   var api = arrayApi[Math.floor(Math.random() * arrayApi.length)];
         request.get({
             url: api,
@@ -366,8 +363,7 @@ module.exports = (apiRoutes) => {
      apiRoutes.post(`/${SERVICE_CONST.SET_DYANAMIC_LOCATION}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
-                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+        var api = '';
 
         DeviceGeo.find({
             'userid': req.body.userId
@@ -425,8 +421,7 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.WHERE_I_AM}`, function (req, res) {
 
         var latlng = req.body.platlng;
-        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.pzipcodes
-                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+        var api = '';
 
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
@@ -465,8 +460,7 @@ module.exports = (apiRoutes) => {
     apiRoutes.post(`/${SERVICE_CONST.SET_NEW_LOCATION}`, function (req, res) {
 
         var latlng = req.body.latlng;
-        var api = 'https://dev4-rs.getiqos.com/AlcsServices/store/getStoreList?BrandName=iqos&Cur_Zip=' + req.body.zipcodes
-                + '&Radius=15&storeTypes=MRU&serviceTypes=DeviceSales%2CHeatStickPurchase%2CGuidedTrial%2CSupport&date=' + req.body.time;
+        var api = '';
 
         Geo.find({
             'userid': cryptr.decrypt(req.body.userId)
