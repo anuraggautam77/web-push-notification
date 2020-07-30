@@ -28,7 +28,7 @@
     "css-loader": "^0.28.5",
     "es6-promise": "^4.2.4",
     "express": "^4.16.3",
-    "express-fileupload": "^0.4.0",
+    "express-fileupload": "^1.1.8",
     "extract-text-webpack-plugin": "^3.0.0",
     "fetch-everywhere": "^1.0.5",
     "forEachAsync": "^3.0.0",
