@@ -38,7 +38,7 @@
     "lodash": "^4.17.5",
     "mongoose": "^5.0.17",
     "morgan": "^1.9.0",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.13.1",
     "nodemon": "^1.17.3",
     "npm-install-all": "^1.1.21",
     "postcss-loader": "^2.0.6",
