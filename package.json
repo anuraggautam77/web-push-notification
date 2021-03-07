@@ -39,7 +39,7 @@
     "mongoose": "^5.0.17",
     "morgan": "^1.9.0",
     "node-sass": "^4.5.3",
-    "nodemon": "^1.17.3",
+    "nodemon": "^2.0.0",
     "npm-install-all": "^1.1.21",
     "postcss-loader": "^2.0.6",
     "pubsub-js": "^1.6.0",
