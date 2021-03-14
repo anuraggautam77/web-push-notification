@@ -22,7 +22,7 @@
     "bcrypt": "^2.0.1",
     "body-parser": "^1.17.2",
     "connect-history-api-fallback": "^1.5.0",
-    "copy-webpack-plugin": "^4.0.1",
+    "copy-webpack-plugin": "^6.0.0",
     "cors": "^2.8.4",
     "cryptr": "^3.0.0",
     "css-loader": "^0.28.5",
